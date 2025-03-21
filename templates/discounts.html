@@ -1,0 +1,298 @@
+{% extends "index.html" %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+    </script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+<div class="main-panel">
+    <div class="content-wrapper">
+
+        <div class="page-header">
+            <h3 class="page-title">Discounts And Offers</h3>
+            {% for message in messages %}
+
+            <div class="alert {{message.tags}} alert-dismissible fade show" style="position:fixed;top:100px;z-index:1;"
+                role="alert">
+                <strong>Hi! </strong> {{message}}
+                <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+            </div>
+            {% endfor %}
+
+            <nav aria-label="breadcrumb">
+                <!-- <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Tables</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> Basic tables </li>
+          </ol> -->
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card" style="height: 500px !important;overflow:scroll">
+                    <div class="card-body">
+                        <div class="item" style="position: sticky; top:10px;background-color:white">
+                            <h4 class="card-title">Add Discounts To All Members</h4>
+                            <p class="card-description"> <button class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop1">Add Discount</button>
+                            </p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+
+                                    <tr>
+                                        <th>Discount Percentage</th>
+                                        <th>Discount End Date</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in discount %}
+
+                                    <tr>
+                                        <td>{{i.Discount_Percentage}} %</td>
+                                        <th>{{i.Till_Date}}</th>
+                                      <td></td>
+                                        <td>
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropbatch"
+                                                class="btn btn-inverse-danger btn-icon" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="delete"><i class="mdi mdi-delete"
+                                                    style="font-size: 25px;"></i></a>
+                                           
+                                        </td>
+                                    </tr>
+
+                                    <!-- Modal batch delete -->
+                                    <div class="modal fade" id="staticBackdropbatch" data-bs-backdrop="static"
+                                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+
+                                                <div class="modal-body">
+                                                    Do you want To Cancel  Discount ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">No</button>
+                                                    <a href="{%url 'DeleteAllDiscounts' i.id %}" type="button"
+                                                        class="btn btn-danger">Yes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card" style="height: 500px !important;overflow:scroll">
+                    <div class="card-body">
+                        <div class="item" style="position: sticky; top:10px;background-color:white">
+                            <h4 class="card-title">Add Discounts To Single Member</h4>
+                            <p class="card-description"><button class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">Add Discount</button>
+                            </p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table">
+                                <thead>
+                                    <tr>
+                                        <th>Member Name</th>
+                                        <th>Discount Percentage</th>
+
+                                        <th>Cancel Discount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for j in member %}
+                                    {% if j.Special_Discount == True %}
+
+                                    <tr>
+                                        <td>{{j}}</td>
+                                        <td>{{j.Discount}}</td>
+
+                                        <td>
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropsub"
+                                                class="btn btn-inverse-danger btn-icon" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="delete"><i class="mdi mdi-delete"
+                                                    style="font-size: 25px;"></i></a>
+                                            
+
+                                        </td>
+                                    </tr>
+
+                                     <!-- Modal Sub Period delete -->
+                                     <div class="modal fade" id="staticBackdropsub" data-bs-backdrop="static"
+                                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                     aria-hidden="true">
+                                     <div class="modal-dialog">
+                                         <div class="modal-content">
+
+                                             <div class="modal-body">
+                                                 Do you want To delete Special Discount ?
+                                             </div>
+                                             <div class="modal-footer">
+                                                 <button type="button" class="btn btn-secondary"
+                                                     data-bs-dismiss="modal">No</button>
+                                                 <a href="{%url 'DeletespecialDiscount' j.id %}" type="button"
+                                                     class="btn btn-danger">Yes</a>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 {% endif %}
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+      
+
+
+
+    </div>
+
+ 
+ <!-- Modal 1-->
+ <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+ aria-labelledby="staticBackdropLabel" aria-hidden="true">
+ <div class="modal-dialog">
+     <div class="modal-content">
+         <div class="modal-header">
+             <h5 class="modal-title" id="staticBackdropLabel">Add Discount On Member</h5>
+             <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+                 aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+             <div class="row">
+
+                 <div class="col-md-12 grid-margin stretch-card">
+                     <div class="card">
+                         <div class="card-body">
+                             </p>
+                             <form class="forms-sample" action="{%url 'DiscountSingleAdd'%}" method="post">
+                                 {% csrf_token %}
+
+                               
+
+                                 <div class="form-group">
+                                     <label for="exampleInputUsername1">Discount Percentage (%)</label>
+                                     <input type="number" required class="form-control" placeholder="Discount Percentage" name="disper">
+                                 </div>
+                                 <div class="form-group">
+                                    <label for="exampleInputUsername1">Member:</label>
+                                    <select name="member" required class="form-control" id="">
+                                        <option value=""  disabled selected>--------------------</option>
+
+                                        {% for i in member%}
+                                        <option value="{{i.id}}"  >{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                 
+                         </div>
+                     </div>
+                 </div>
+
+             </div>
+         </div>
+         <div class="modal-footer">
+             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+             <button type="submit" class="btn btn-primary mr-2">Submit</button>
+         </div>
+         </form>
+
+     </div>
+ </div>
+</div>
+
+<!-- model 2 -->
+<div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+ aria-labelledby="staticBackdropLabel" aria-hidden="true">
+ <div class="modal-dialog">
+     <div class="modal-content">
+         <div class="modal-header">
+             <h5 class="modal-title" id="staticBackdropLabel">Add Discount</h5>
+             <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+                 aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+             <div class="row">
+
+                 <div class="col-md-12 grid-margin stretch-card">
+                     <div class="card">
+                         <div class="card-body">
+                             </p>
+                             <form class="forms-sample" action="{%url 'DiscountAllAdd' %}" method="post">
+                                 {% csrf_token %}
+                                 <div class="form-group">
+                                    <label for="exampleInputUsername1">Discount Percentage (%)</label>
+                                    <input type="number" required class="form-control" placeholder="Discount Percentage" name="disper">
+                                </div>
+                                <div class="form-group">
+                                   <label for="exampleInputUsername1">Discount Edd Date</label>
+                                   <input type="date" id="datefield" required class="form-control" placeholder="Discount Percentage" name="dateend">
+                               </div>
+
+                         </div>
+                     </div>
+                 </div>
+
+             </div>
+         </div>
+         <div class="modal-footer">
+             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+             <button type="submit" class="btn btn-primary mr-2">Submit</button>
+         </div>
+         </form>
+     </div>
+ </div>
+</div>
+
+
+
+
+  
+
+
+
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © red defend computers
+                <d</span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Developed By <a
+                            href="https://reddefend.ae/" target="_blank">red defend computers</a></span>
+        </div>
+    </footer>
+</div>
+
+<script>
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+      dd = '0' + dd;
+    }
+    if (mm < 10) {
+      mm = '0' + mm;
+    }
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("datefield").setAttribute("min", today);
+  </script>
+
+{% endblock %}

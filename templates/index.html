@@ -1,0 +1,637 @@
+{% load static %}
+{% static "images" as baseurl %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>OYA-BABY</title>
+  <link rel="stylesheet" href="{%static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}" />
+  <link rel="stylesheet" href="{%static 'assets/vendors/flag-icon-css/css/flag-icon.min.css' %}" />
+  <link rel="stylesheet" href="{%static 'assets/vendors/css/vendor.bundle.base.css' %}" />
+  <link rel="stylesheet" href="{%static 'assets/vendors/font-awesome/css/font-awesome.min.css' %}" />
+  <link rel="stylesheet" href="{%static 'assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css' %}" />
+  <link rel="stylesheet" href="{%static 'assets/css/style.css' %}" />
+  <link rel="shortcut icon" href="{%static 'assets/images/Logo_Reveal_Slides.png' %}" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="container-scroller">
+    <nav class="sidebar sidebar-offcanvas" id="sidebar">
+      <div class="text-center sidebar-brand-wrapper d-flex align-items-center">
+        <a class="sidebar-brand brand-logo" href="{%url 'Home' %}"><img
+            src="{%static 'assets/images/Logo_Reveal_Slides.png' %}" alt="logo" style="object-fit: contain;" /></a>
+        <a class="sidebar-brand brand-logo-mini pl-4 pt-3" href="{%url 'Home' %}"><img
+            src="{%static 'assets/images/Logo_Reveal_Slides.png' %}" alt="logo" /></a>
+      </div>
+      <ul class="nav">
+        <li class="nav-item nav-profile">
+          <a href="#" class="nav-link">
+            <div class="nav-profile-image">
+              <img src="{%static 'assets/images/faces/face1.jpg' %}" alt="profile" />
+              <span class="login-status online"></span>
+              <!--change to offline or busy as needed-->
+            </div>
+            <div class="nav-profile-text d-flex flex-column pr-3">
+              <span class="font-weight-medium mb-2">{{request.user}}</span>
+              <!-- <span class="font-weight-normal">$8,753.00</span> -->
+            </div>
+            <!-- <span class="badge badge-danger text-white ml-3 rounded">3</span> -->
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'Home' %}">
+            <i class="mdi mdi-home menu-icon"></i>
+            <span class="menu-title">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'Member' %}">
+            <i class="mdi mdi-account-multiple menu-icon"></i>
+            <span class="menu-title"> Members</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'FeePendingMembers' %}">
+            <i class="mdi mdi-account-multiple-plus menu-icon"></i>
+            <span class="menu-title">Fee Pending Members</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'Payments'%}">
+            <i class="mdi mdi-cash-multiple menu-icon"></i>
+            <span class="menu-title">Payments</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'income' %}">
+            <i class="mdi mdi-cash-multiple menu-icon"></i>
+            <span class="menu-title">Income</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'expence' %}">
+            <i class="mdi mdi-cash-multiple menu-icon"></i>
+            <span class="menu-title">Expense</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'balance_sheet' %}">
+            <i class="mdi mdi-cash-multiple menu-icon"></i>
+            <span class="menu-title">Income and Expense Chart</span>
+          </a>
+        </li>
+
+       
+        {% if request.user.groups.all.0.name == "admin" %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'Discount' %}">
+            <i class="mdi mdi-wallet-giftcard menu-icon"></i>
+            <!-- <i class="bi bi-person-add" style="font-size: 30px;" ></i> -->
+            <span class="menu-title"> Offers And Discounts</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'StaffDetails' %}">
+            <i class="mdi mdi-account-star menu-icon"></i>
+            <!-- <i class="bi bi-person-add" style="font-size: 30px;" ></i> -->
+            <span class="menu-title"> User Management</span>
+          </a>
+        </li>
+
+        {% endif %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'Setting_Module' %}">
+            <i class="mdi mdi-settings menu-icon"></i>
+            <span class="menu-title">Settings</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <span class="nav-link" href="#">
+            <span class="menu-title">Docs</span>
+          </span>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'MemberAccess' %}">
+            <i class=" mdi mdi-file-excel menu-icon"></i>
+            <span class="menu-title">Reports</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{%url 'Supports' %}">
+            <i class=" mdi mdi-help-circle menu-icon"></i>
+            <span class="menu-title">Support</span>
+          </a>
+        </li>
+        <!-- <li class="nav-item">
+            <a class="nav-link" href="https://www.bootstrapdash.com/demo/breeze-free/documentation/documentation.html">
+              <i class="mdi mdi-file-document-box menu-icon"></i>
+              <span class="menu-title">Documentation</span>
+            </a>
+          </li> -->
+        <li class="nav-item sidebar-actions">
+          <div class="nav-link">
+            <div class="mt-4">
+              <div class="border-none">
+                <!-- <p class="text-black">Notification</p> -->
+              </div>
+              <ul class="mt-4 pl-0">
+                <li><a href="{%url 'SignOut' %}" class="nav-link">Sign Out</a></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </nav>
+    <div class="container-fluid page-body-wrapper">
+      <div id="theme-settings" class="settings-panel">
+        <i class="settings-close mdi mdi-close"></i>
+        <p class="settings-heading">SIDEBAR SKINS</p>
+        <div class="sidebar-bg-options selected" id="sidebar-default-theme">
+          <div class="img-ss rounded-circle bg-light border mr-3"></div> Default
+        </div>
+        <div class="sidebar-bg-options" id="sidebar-dark-theme">
+          <div class="img-ss rounded-circle bg-dark border mr-3"></div> Dark
+        </div>
+        <p class="settings-heading mt-2">HEADER SKINS</p>
+        <div class="color-tiles mx-0 px-4">
+          <div class="tiles light"></div>
+          <div class="tiles dark"></div>
+        </div>
+      </div>
+      <nav class="navbar col-lg-12 col-12 p-lg-0 fixed-top d-flex flex-row">
+        <div class="navbar-menu-wrapper d-flex align-items-stretch justify-content-between">
+          <a class="navbar-brand brand-logo-mini align-self-center d-lg-none" href="{%url 'Home' %}"><img
+              src="{%static 'assets/images/EF_logo.png' %}" height="50px" alt="logo" /></a>
+          <button class="navbar-toggler navbar-toggler align-self-center mr-2" type="button" data-toggle="minimize">
+            <i class="mdi mdi-menu"></i>
+          </button>
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
+                data-toggle="dropdown">
+                <i class="mdi mdi-bell-outline"></i>
+                <span class="count count-varient1">{{notificationcount}}</span>
+              </a>
+              <div class="dropdown-menu navbar-dropdown navbar-dropdown-large preview-list"
+                aria-labelledby="notificationDropdown">
+                <h6 class="p-3 mb-0">Notifications</h6>
+                {% for i in notification_payments %}
+
+                <a class="dropdown-item preview-item">
+                  <div class="preview-thumbnail">
+                    <img src="{{i.Member.Photo.url}}" alt="" class="profile-pic" />
+                  </div>
+                  <div class="preview-item-content">
+                    <p class="mb-0">{{i.Member}} <span class="text-small text-muted"><br> Payed AED: {{i.Amount}} On
+                        {{i.Payment_Date}}</span>
+                    </p>
+                  </div>
+                </a>
+                {% endfor %}
+
+
+                <div class="dropdown-divider"></div>
+                <a href="{%url 'ViewAllActivities' %}">
+                  <p class="p-3 mb-0">View all activities</p>
+                </a>
+
+              </div>
+            </li>
+
+            <li class="nav-item nav-search border-0 ml-1 ml-md-3 ml-lg-5 d-none d-md-flex">
+              <form class="nav-link form-inline mt-2 mt-md-0" method="post" action="{%url 'Search' %}">
+                {% csrf_token %}
+                <div class="input-group">
+                  <input type="text" required name="key" class="form-control" placeholder="Search" />
+                  <div class="input-group-append">
+                    <button type="submit" class="input-group-text">
+                      <i class="mdi mdi-magnify"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </li>
+          </ul>
+          <ul class="navbar-nav navbar-nav-right ml-lg-auto">
+            <li class="nav-item nav-profile dropdown border-0">
+              <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown">
+                <img class="nav-profile-img mr-2" alt="" src="{%static 'assets/images/faces/face1.jpg' %}" />
+                <span class="profile-name">{{request.user}}</span>
+              </a>
+              <div class="dropdown-menu navbar-dropdown w-100" aria-labelledby="profileDropdown">
+                <a class="dropdown-item" href="{%url 'SignOut' %}">
+                  <i class="mdi mdi-logout mr-2 text-primary"></i> Signout </a>
+              </div>
+            </li>
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+            data-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </nav>
+
+      {% block content %}
+
+      <div class="main-panel">
+        <div class="content-wrapper pb-0">
+          {% for message in messages %}
+
+          <div class="alert {{message.tags}} alert-dismissible fade show " style="position:fixed;top:100px"
+            role="alert">
+            <strong>Information!</strong> {{message}}
+            <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="alert"
+              aria-label="Close"></button>
+          </div>
+          {% endfor %}
+
+          <div class="page-header flex-wrap">
+            <h3 class="mb-0"> Hi, welcome back! <span
+                class="pl-0 h6 pl-sm-2 text-muted d-inline-block">{{request.user}}</span>
+            </h3>
+            <div class="spinner" id="spinner-container" style="display: none;">
+              <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden"></span>
+              </div> <span class="text-success">Checking Unpaid members....</span>
+            </div>
+
+            <div class="d-flex">
+              <a href="{%url 'AllMembers' %}" type="button" class="btn btn-sm bg-white btn-icon-text border">
+                     <i class="mdi mdi-account-multiple btn-icon-prepend"></i> All Members </a>
+                <a href="{%url 'Payments'%}" type="button" class="btn btn-sm bg-white btn-icon-text border ml-3">
+                  <i class="mdi mdi-cash-multiple btn-icon-prepend"></i> Payments
+                </a>
+                <a href="{%url 'FeePendingMembers' %}" type="button" class="btn btn-sm ml-3 btn-success">
+                     <i class="mdi mdi-alert-circle-outline btn-icon-prepend"></i> Fee Pending Members </a>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                  <div class="card bg-info">
+                    <div class="card-body px-3 py-4">
+                      <div class="d-flex justify-content-between align-items-start">
+                        <div class="color-card">
+                          <p class="mb-0 color-card-head">Active Members</p>
+                          <h2 class="text-white"> {{active_count}}<span class="h5"></span>
+                          </h2>
+                        </div>
+                        <i class="card-icon-indicator mdi mdi-basket bg-inverse-icon-warning"></i>
+                      </div>
+                      <h6 class="text-white">Month of {{month}}/ {{current_year}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                  <div class="card bg-danger">
+                    <div class="card-body px-3 py-4">
+                      <div class="d-flex justify-content-between align-items-start">
+                        <div class="color-card">
+                          <p class="mb-0 color-card-head">Inactive Members</p>
+                          <h2 class="text-white"> {{inactive_count}}<span class="h5"></span>
+                          </h2>
+                        </div>
+                        <i class="card-icon-indicator mdi mdi-basket bg-inverse-icon-warning"></i>
+                      </div>
+                      <h6 class="text-white">Month of {{month}}/ {{current_year}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                  <div class="card bg-info">
+                    <div class="card-body px-3 py-4">
+                      <div class="d-flex justify-content-between align-items-start">
+                        <div class="color-card">
+                          <p class="mb-0 color-card-head">Total Members</p>
+                          <h2 class="text-white">{{membercount}}</h2>
+                        </div>
+                        <i class="card-icon-indicator mdi mdi-account-circle bg-inverse-icon-success"></i>
+                      </div>
+                      <h6 class="text-white">Month of {{month}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+              <div class="row">
+                <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
+                  <div class="card bg-warning">
+                    <div class="card-body px-3 py-4">
+                      <div class="d-flex justify-content-between align-items-start">
+                        <div class="color-card">
+                          <p class="mb-0 color-card-head">Total Fee Collected</p>
+                          <h2 class="text-white"> AED {{collected_amount}}.<span class="h5">00</span>
+                          </h2>
+                        </div>
+                        <i class="card-icon-indicator mdi mdi-basket bg-inverse-icon-warning"></i>
+                      </div>
+                      <h6 class="text-white">Month of {{month}}/ {{current_year}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0 pb-xl-3 mt-3">
+                  <div class="card bg-primary">
+                    <div class="card-body px-3 py-4">
+                      <div class="d-flex justify-content-between align-items-start">
+                        <div class="color-card">
+                          <p class="mb-0 color-card-head">Fee Pending Members</p>
+                          <h2 class="text-white"> {{feepending}}<span class="h5"></span>
+                          </h2>
+                        </div>
+                        <i class="card-icon-indicator mdi mdi-briefcase-outline bg-inverse-icon-primary"></i>
+                      </div>
+                      <h6 class="text-white">Month of {{month}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-xl-9 col-sm-6 grid-margin stretch-card">
+              <div class="card" style="max-height: 700px;">
+                <div class="card-body px-0 overflow-auto">
+                  <h4 class="card-title pl-4">Members</h4>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead class="bg-light">
+                        <tr>
+                          <th>Member</th>
+                          <th>Subscrption Type</th>
+                          <th>Subscrption End Date</th>
+                          <th>Status</th>
+                          <th>View</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for sub in subscribers %}
+                        <tr>
+                          <td>
+                            <div class="d-flex align-items-center">
+                              <!-- <img src="{{sub.Member.Photo.url}}" alt="image" /> -->
+                              <div class="table-user-name ml-3">
+                                <p class="mb-0 font-weight-medium"> {{sub.Member.First_Name}} {{sub.Member.Last_Name}}
+                                </p>
+                                {% if sub.Payment_Status == False %}
+                                <small class="text-danger"> Payment Not Completed</small>
+                                {% else %}
+                                <small> Payment Done</small>
+
+                                {% endif %}
+                              </div>
+                            </div>
+                          </td>
+                          <td>{{sub.Type_Of_Subscription}}</td>
+                          <td>
+                            {{sub.Subscription_End_Date}}
+                          </td>
+                          <td>
+                            {% if sub.Payment_Status == False %}
+                            <div class="badge badge-inverse-danger"> Inactive </div>
+                            {% else %}
+                            <div class="badge badge-inverse-success"> Active </div>
+                            {% endif %}
+                          </td>
+                          <td>
+                            <a href="{%url 'MembersSingleView' sub.Member.id %}" class="btn btn-outline-info">View</a>
+                          </td>
+                        </tr>
+                        {% endfor %}
+
+                      </tbody>
+                    </table>
+                  </div>
+                  <a class="text-black mt-3 d-block pl-4" href="{%url 'AllMembers' %}">
+                    <span class="font-weight-medium h6">View all Members</span>
+                    <i class="mdi mdi-chevron-right"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-8 grid-margin stretch-card">
+              <div class="card card-calender">
+                <div class="card-body">
+                  <div class="row pt-4">
+                    <div class="col-sm-6">
+                      <h1 class="text-white" id="time">10:16PM</h1>
+                      <h5 class="text-white" id="date">Monday 25 October, 2016</h5>
+                      <h5 class="text-white pt-2 m-0">Precipitation:50%</h5>
+                      <h5 class="text-white m-0">Humidity: <span id="hum"></span> </h5>
+                      <h5 class="text-white m-0">Wind: <span id="wind"></span> km/h</h5>
+                    </div>
+                    <div class="col-sm-6 text-sm-right pt-3 pt-sm-0">
+                      <h3 class="text-white" id="sky_status">Clear Sky</h3>
+                      <p class="text-white m-0" id="city"></p>
+                      <h3 class="text-white m-0" id="temp">21<span>°C</span></h3>
+                    </div>
+                  </div>
+                  <div class="row mt-5">
+                    <div class="col-sm-12">
+                      <ul class="d-flex pl-0 overflow-auto">
+
+                        <li class="weakly-weather-item text-white font-weight-medium text-center">
+                          <p class="mb-0">MON</p>
+                          <i class="mdi mdi-weather-hail"></i>
+                          <p class="mb-0" id="tempW1">21<span class="symbol">°c</span></p>
+                        </li>
+                        <li class="weakly-weather-item text-white font-weight-medium text-center">
+                          <p class="mb-0">TUE</p>
+                          <i class="mdi mdi-weather-cloudy"></i>
+                          <p class="mb-0" id="2">21<span class="symbol">°c</span></p>
+                        </li>
+                        <li class="weakly-weather-item text-white font-weight-medium text-center">
+                          <p class="mb-0">WED</p>
+                          <i class="mdi mdi-weather-fog"></i>
+                          <p class="mb-0" id="3">21<span class="symbol">°c</span></p>
+                        </li>
+                        <li class="weakly-weather-item text-white font-weight-medium text-center">
+                          <p class="mb-0">THU</p>
+                          <i class="mdi mdi-weather-hail"></i>
+                          <p class="mb-0" id="4">21<span class="symbol">°c</span></p>
+                        </li>
+                        <li class="weakly-weather-item text-white font-weight-medium text-center">
+                          <p class="mb-0">FRI</p>
+                          <i class="mdi mdi-weather-cloudy"></i>
+                          <p class="mb-0" id="5">21<span class="symbol">°c</span></p>
+                        </li>
+                        <li class="weakly-weather-item text-white font-weight-medium text-center">
+                          <p class="mb-0">SAT</p>
+                          <i class="mdi mdi-weather-hail"></i>
+                          <p class="mb-0" id="6">21<span class="symbol">°c</span></p>
+                        </li>
+                        <li class="weakly-weather-item text-white font-weight-medium text-center">
+                          <p class="mb-0">SUN</p>
+                          <i class="mdi mdi-weather-cloudy"></i>
+                          <p class="mb-0" id="7">21<span class="symbol">°c</span></p>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-6 grid-margin stretch-card">
+              <!--datepicker-->
+              <div class="card">
+                <div class="card-body">
+                  <div id="inline-datepicker" class="datepicker table-responsive"></div>
+                </div>
+              </div>
+              <!--datepicker ends-->
+            </div>
+          </div>
+        </div>
+
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © red defend
+              computers</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Developed By <a
+                href="https://reddefend.ae/" target="_blank">red defend computers</a></span>
+          </div>
+        </footer>
+      </div>
+      <!-- main-panel ends -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+        $(document).ready(function () {
+          $('#spinner-container').show();
+          $.ajax({
+            type: 'POST',
+            url: '/trigger-task/',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}'
+            },
+            success: function (response) {
+              console.log(response.message);
+              $('#spinner-container').hide();
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX error: ' + status + ' - ' + error);
+              $('#spinner-container').hide();
+            }
+          });
+        });
+      </script>
+
+      {% endblock %}
+
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <script>
+    const apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=dubai&units=metric&appid=076465d2e663be277c6d13a3991ca3b6';
+    const currentDate = new Date();
+    const apiWeeKurl = "https://api.openweathermap.org/data/2.5/forecast?q=dubai&units=metric&appid=076465d2e663be277c6d13a3991ca3b6"
+    // Get the current date and time components
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // Months are zero-based, so add 1
+    const day = currentDate.getDate();
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const seconds = currentDate.getSeconds();
+    const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+    const formattedTime = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    document.getElementById('time').innerHTML = formattedTime;
+    document.getElementById('date').innerHTML = formattedDate
+    // Make a GET request to the API
+    fetch(apiUrl)
+      .then(response => {
+        // Check if the request was successful (status code 200)
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        // Parse the response as JSON
+        return response.json();
+      })
+      .then(data => {
+        // Store the result in a variable called 'data'
+        const weatherData = data;
+        console.log(weatherData.main.temp);
+        document.getElementById('city').innerHTML = weatherData.name
+        document.getElementById("sky_status").innerHTML = weatherData.weather[0].description
+        document.getElementById('temp').innerHTML = weatherData.main.temp
+        document.getElementById('hum').innerHTML = weatherData.main.humidity
+        document.getElementById('wind').innerHTML = weatherData.wind.speed
+        console.log(weatherData)
+        // Now you can use 'weatherData' as needed in your code
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+      });
+
+    fetch(apiWeeKurl).then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      } return response.json();
+    }).then(data => {
+      console.log(data, "weekly")
+      let array = data.list;
+      let id = 0;
+      //  console.log(array[0].main.temp,"temp")
+
+      console.log("hai", array[0].main.temp);
+      // Assuming you want to update the inner HTML of an element with the id `${i}`
+      // Replace `YOUR_ELEMENT_ID` with the actual id you want to target
+      document.getElementById("tempW1").innerHTML = array[0].main.temp;
+      document.getElementById("2").innerHTML = array[0].main.temp;
+      for (let i = 2; i < 7; i++) {
+        document.getElementById(`${i}`).innerHTML = array[i].main.temp;
+      }
+
+
+
+    })
+  </script>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <!-- <script src="{%static 'assets/vendors/js/vendor.bundle.base.js' %}"></script> -->
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{%static 'assets/vendors/chart.js/Chart.min.js' %}"></script>
+  <script src="{%static 'assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
+  <script src="{%static 'assets/vendors/flot/jquery.flot.js' %}"></script>
+  <script src="{%static 'assets/vendors/flot/jquery.flot.resize.js' %}"></script>
+  <script src="{%static 'assets/vendors/flot/jquery.flot.categories.js' %}"></script>
+  <script src="{%static 'assets/vendors/flot/jquery.flot.fillbetween.js' %}"></script>
+  <script src="{%static 'assets/vendors/flot/jquery.flot.stack.js' %}"></script>
+  <script src="{%static 'assets/vendors/flot/jquery.flot.pie.js' %}"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{%static 'assets/js/off-canvas.js' %}"></script>
+  <script src="{%static 'assets/js/hoverable-collapse.js' %}"></script>
+  <script src="{%static 'assets/js/misc.js' %}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{%static 'assets/js/dashboard.js' %}"></script>
+  <!-- End custom js for this page -->
+
+  <!-- datatable jqu -->
+</body>
+
+</html>

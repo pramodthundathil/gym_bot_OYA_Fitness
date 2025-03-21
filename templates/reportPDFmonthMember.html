@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Member Report</title>
+    <style>
+      table{
+            width:100%;
+            border-collapse: collapse;
+        }
+        table, td, th{
+            border: 1px solid black;
+            height: 30px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h3 style="text-align: center;">Member Details month {{date}}</h3>
+    <h4>Number {{Token}}</h4>
+
+    <table>
+        <tr>
+            <th>Sl No</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Date Of Birth</th>
+            <th>Gender</th>
+            <th>Mobile No.</th>
+            <!-- <th>Email</th> -->
+            <th>Address</th>
+            <th>Medical History</th>
+            <th>Registration Date</th>
+            <th>Date Added</th>
+            <th>Access Token</th>
+        </tr>
+        {% for i in member  %}
+          
+        <tr>
+            <th>{{forloop.counter}}</th>
+            <td>{{i.First_Name}}</td>
+            <td>{{i.Last_Name}}</td>
+            <td>{{i.Date_Of_Birth}}</td>
+            <td>{{i.Gender}}</td>
+            <td>{{i.Mobile_Number}}</td>
+            <!-- <td>{{i.Email}}</td> -->
+            <td>{{i.Address}}</td>
+            <td>{{i.Medical_History}}</td>
+            <td>{{i.Registration_Date}}</td>
+            <td>{{i.Date_Added}}</td>
+            <td>{{i.Access_Token_Id}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    
+</body>
+</html>

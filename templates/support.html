@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% load static %}
+{% static "images" as baseurl %}
+
+{% block content %}
+
+<div class="main-panel">
+    <div class="content-wrapper pb-0">
+        {% for message in messages  %}
+
+        <div class="alert {{message.tags}} alert-dismissible fade show " style="position:fixed;top:100px;z-index:1;" role="alert">
+            <strong>Information!</strong> {{message}}
+            <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="alert"
+                aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        <div class="page-header flex-wrap">
+            <h3 class="mb-0"> Support <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block"></span>
+            </h3>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body px-0 text-center overflow-auto">
+                    <h4 class="card-title pl-4">Kindly Send the feedback and support Quaries</h4>
+                    
+                        <form method="post">
+                            {% csrf_token %}
+                            <br>
+                            <br>
+                            <label for="">Enter Your Name:</label><br>
+                            <input type="text" class="form-control" name="name" placeholder="Enter Name" style="width: 60% !important;margin: auto;border: .5px solid blue;" ><br><br>
+                            <label for="">Enter Quaries and support Questins:</label>
+                            <textarea name="qury" id="" cols="10" rows="20" class="form-control" placeholder="Your text here.." style="width: 60% !important;margin: auto;border: .5px solid blue;"></textarea><br><br><br>
+                            <button class="btn btn-outline-info">Send</button>
+                        </form>
+                      
+                   
+                    <!-- <a class="text-black mt-3 d-block pl-4" href="#">
+                      <span class="font-weight-medium h6">View all Payments</span>
+                      <i class="mdi mdi-chevron-right"></i></a> -->
+                  </div>
+                </div>
+              </div>
+          </div> 
+    </div>
+</div>
+{% endblock %}

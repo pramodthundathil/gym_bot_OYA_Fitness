@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Income Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .image
+        {
+            text-align: center;
+        }
+        .image img {
+            display: block;
+            width: 50px;
+            margin: auto;
+
+        }
+
+        .subtotal {
+            font-weight: bold;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="image"><img src="{{logo_url}}" style="display: block;margin: auto;" alt="">
+        <h1>OYA BABY FITNESS</h1>
+    </div>
+    <h1>Income Report</h1>
+    <p>From {{ start_date }} to {{ end_date }}</p>
+    <table border="1" >
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Particulars</th>
+                <th>Amount</th>
+                <th>Other</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in income %}
+            <tr>
+                <td>{{ expense.date }}</td>
+                <td>{{ expense.perticulers }}</td>
+                <td>{{ expense.amount }}</td>
+                <td>{{ expense.other }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2" class="subtotal">Subtotal</td>
+                <td class="subtotal">{{ subtotal }}</td>
+                <td>-</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

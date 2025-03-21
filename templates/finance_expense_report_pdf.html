@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 4px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .totals-row {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img src="{{logo_url}}" width="40px" alt="">
+        <h1>Bilberry Foods</h1>
+        <h2>Finance and Expense Report</h2>
+        {{logo_url}}
+        <p>For Date: {{ report_date }}</p>
+    </div>
+
+    <!-- Income Section -->
+    <h3>Income</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Particulars</th>
+                <th>Amount</th>
+                <th>Bill Number</th>
+                <th>Partner</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in income_records %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.perticulers }}</td>
+                <td>{{ record.amount }}</td>
+                <td>{{ record.bill_number }}</td>
+                <td>{{ record.other }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Expense Section -->
+    <h3>Expense</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Particulars</th>
+                <th>Amount</th>
+                <th>Bill Number</th>
+                <th>Partner</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in expense_records %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.perticulers }}</td>
+                <td>{{ record.amount }}</td>
+                <td>{{ record.bill_number }}</td>
+                <td>{{ record.other }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Invoice Section -->
+    <h3>Invoices</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Invoice Number</th>
+                <th>Customer</th>
+                <th>Total Amount</th>
+                <th>Paid Amount</th>
+                <th>Balance Amount</th>
+                <th>Payment Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_date }}</td>
+                <td>{{ order.invoice_number }}</td>
+                <td>-{{ order.customer.name }}</td>
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.payed_amount }}</td>
+                <td>{{ order.balance_amount }}</td>
+                <td>{{ order.payment_status1 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Purchases Section -->
+    <h3>Purchases</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Purchase Number</th>
+                <th>Supplier</th>
+                <th>Total Amount</th>
+                <th>Paid Amount</th>
+                <th>Balance Amount</th>
+                <th>Payment Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in purchases %}
+            <tr>
+                <td>{{ purchase.bill_date }}</td>
+                <td>{{ purchase.purchase_bill_number }}</td>
+                <td>{{ purchase.supplier.name }}</td>
+                <td>{{ purchase.amount }}</td>
+                <td>{{ purchase.paid_amount }}</td>
+                <td>{{ purchase.balance_amount }}</td>
+                <td>{{ purchase.payment_status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Summary Section -->
+    <h3 style="background-color: #f2f2f2; padding: 10px; text-align: center; border-radius: 5px;">Summary</h3>
+    <div style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #fafafa;">
+        <p><strong>Total Income:</strong> {{ total_income|floatformat:2 }} QAR</p>
+        <p><strong>Total Expense:</strong> {{ total_expense|floatformat:2 }} QAR</p>
+        <p><strong>Net Balance:</strong> {{ net_balance|floatformat:2 }} QAR</p>
+        <hr style="margin: 10px 0;">
+        <p><strong>Total Invoices Amount:</strong> {{ total_invoices_amount|floatformat:2 }} QAR</p>
+        <p><strong>Total Amount Received Today:</strong> {{ total_received_today|floatformat:2 }} QAR</p>
+        <p><strong>Pending Amount Today:</strong> {{ pending_amount_today|floatformat:2 }} QAR</p>
+        <hr style="margin: 10px 0;">
+        <p><strong>Total Purchase Amount:</strong> {{ total_purchase_amount|floatformat:2 }} QAR</p>
+        <p><strong>Total Paid for Purchases:</strong> {{ total_paid_for_purchases|floatformat:2 }} QAR</p>
+        <p><strong>Pending Purchase Amount:</strong> {{ total_pending_purchase|floatformat:2 }} QAR</p>
+    </div>
+
+</body>
+
+</html>

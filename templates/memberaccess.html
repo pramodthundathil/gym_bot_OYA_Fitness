@@ -1,0 +1,382 @@
+{% extends "index.html" %}
+{% load static %}
+{% static "images" as baseurl %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+
+<div class="main-panel">
+    <div class="content-wrapper pb-0">
+        {% for message in messages %}
+
+        <div class="alert {{message.tags}} alert-dismissible fade show " style="position:fixed;top:100px;z-index:1;"
+            role="alert">
+            <strong>Information!</strong> {{message}}
+            <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="alert"
+                aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        <div class="page-header flex-wrap">
+            <h3 class="mb-0"> Reports <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block"></span>
+            </h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Generate Member Report</h4>
+                        <p class="card-description">Generate Report
+
+                            <a href="{%url 'PDFprintFullMemberReport' %}" target="_blank" type="button"
+                                class="btn btn-sm bg-white btn-icon-text border ml-3">
+                                <i class="mdi mdi-printer btn-icon-prepend"></i> Print </a>
+                        </p>
+                        <div class="form-group row">
+                            <div class="col">
+                                <div id="the-basics">
+                                    <label for="">Full Member Report:</label><br><br>
+
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <a href="{%url 'FullMemberReport' %}" class="btn btn-info"><i
+                                                class="bi bi-file-earmark-spreadsheet" style="font-size: larger;"></i>
+                                            &nbsp; Excel</a>
+                                        <a href="{%url 'PDFprintFullMemberReport' %}" target="_blank" type="button"
+                                            class="btn btn-danger"> <i class="bi bi-filetype-pdf"
+                                                style="font-size: larger;"></i> &nbsp; &nbsp;PDF</a>
+
+                                    </div>
+                                    <!-- <a href="" class="btn btn-outline-info">Full Member Reports</a> -->
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div id="bloodhound">
+                                    <label for="">Monthly Member Report:</label><br><br>
+
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <a href="{%url 'MonthMemberReport' %}" class="btn btn-info"><i
+                                                class="bi bi-file-earmark-spreadsheet" style="font-size: larger;"></i>
+                                            &nbsp; Excel</a>
+                                        <a href="{%url 'PDFmonthMember' %}" class="btn btn-danger"> <i
+                                                class="bi bi-filetype-pdf" style="font-size: larger;"></i> &nbsp;
+                                            &nbsp;PDF</a>
+
+                                    </div>
+                                    <!-- <a href="" class="btn btn-outline-warning">Report on This Month</a> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Member Report</h4>
+                        <p class="card-description">Date Wise Member Report
+
+
+                        </p>
+                        <form action="{%url 'DateWiseMemberReport' %}" method="post">
+                            <div class="form-group row">
+
+                                {% csrf_token %}
+                                <div class="col">
+                                    <label>Start Date</label>
+                                    <div id="the-basics">
+                                        <input class="typeahead" oninput="DateCalcu()" id="sdate" type="date"
+                                            name="sdate" required placeholder="States of USA" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label>End Date</label>
+                                    <div id="bloodhound">
+                                        <input class="typeahead" id="edate" type="date" name="enddate" required
+                                            placeholder="States of USA" />
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-5">
+                                    <button type="submit" class="btn btn-dark">Generate</button>
+                                    <button type="submit" value="pdf" name="submit" class="btn btn-danger">Generate
+                                        PDF</button>
+
+                                </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Generate Payment Report</h4>
+                    <p class="card-description">Generate Report
+                        <a href="{%url 'PDFprintFullPaymentReport' %}" target="_blank" type="button"
+                            class="btn btn-sm bg-white btn-icon-text border ml-3">
+                            <i class="mdi mdi-printer btn-icon-prepend"></i> Print </a>
+                    </p>
+                    <div class="form-group row">
+                        <div class="col">
+
+                            <div id="the-basics">
+                                <label for="">Full Payment Report:</label><br><br>
+
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a href="{%url 'PaymentReport' %}" class="btn btn-info"><i
+                                            class="bi bi-file-earmark-spreadsheet" style="font-size: larger;"></i>
+                                        &nbsp; Excel</a>
+                                    <a href="{%url 'PDFprintFullPaymentReport' %}" target="_blank" type="button"
+                                        class="btn btn-danger"> <i class="bi bi-filetype-pdf"
+                                            style="font-size: larger;"></i> &nbsp; &nbsp;PDF</a>
+
+                                </div>
+
+                                <!-- <a href="{%url 'PaymentReport' %}" class="btn btn-outline-info">Full Payment Reports</a> -->
+                            </div>
+                        </div>
+                        <div class="col">
+
+                            <div id="bloodhound">
+                                <label for="">Month Payment Report:</label><br><br>
+
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a href="{%url 'PaymentReportMonth' %}" class="btn btn-info"><i
+                                            class="bi bi-file-earmark-spreadsheet" style="font-size: larger;"></i>
+                                        &nbsp; Excel</a>
+                                    <a href="{%url 'PDFmonthpayment' %}" target="_blank" class="btn btn-danger"> <i
+                                            class="bi bi-filetype-pdf" style="font-size: larger;"></i> &nbsp;
+                                        &nbsp;PDF</a>
+
+                                </div>
+                                <!-- <a href="" class="btn btn-outline-warning">Report on This Month</a> -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="form-group row">
+
+                            <div class="col">
+                            
+                                <div id="bloodhound">
+                                    <a href="" class="btn btn-outline-info">Report on pending fee</a>
+                                </div>
+                            </div>
+                            <div class="col">
+                                
+                                <div id="bloodhound">
+                                    <a href="" class="btn btn-outline-warning">Report on Paid Fee</a>
+                                </div>
+                            </div>
+                        </div> -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Payment Report</h4>
+                    <p class="card-description">Date Wise Payment Report</p>
+                    <form action="{%url 'DateWisePaymentReport' %}" method="post">
+                        {% csrf_token %}
+
+                        <div class="form-group row">
+                            <div class="col">
+                                <label>Start Date</label>
+                                <div id="the-basics">
+                                    <input class="typeahead" oninput="DateCalcu1()" id="sdate1" type="date" name="sdate"
+                                        required placeholder="States of USA" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label>End Date</label>
+                                <div id="bloodhound">
+                                    <input class="typeahead" id="edate1" type="date" name="enddate" required
+                                        placeholder="States of USA" />
+                                </div>
+                            </div>
+                            <div class="col-12 mt-5">
+                                <button type="submit" class="btn btn-dark">Generate</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="col-md-6 mt-3">
+            <div class="card" style="padding: 20px;">
+                <h5>Expense Report</h5>
+
+                <div class="btn-group btn-group-toggle btn-group-edges" style="width: 300px; margin: auto;">
+                    <a class="button btn button-icon bg-info" data-bs-toggle="modal" data-bs-target="#expense_exl"
+                        href="#">Excel</a>
+                    <a class="button btn button-icon bg-danger" data-bs-toggle="modal" data-bs-target="#expense_pdf"
+                        target="_blank" href="#">PDF</a>
+                </div>
+
+                <!-- Modal expense EXl and PDF -->
+                <div class="modal fade" id="expense_exl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Generate Excel
+                                    Expense Report</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{%url 'expence_report_excel' %}" method="post">
+                                    {% csrf_token %}
+                                    <label for="">Start Date</label>
+                                    <input type="date" class="form-control" name="sdate" required>
+                                    <label for="">End Date</label>
+                                    <input type="date" class="form-control" name="edate" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Generate</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="expense_pdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Generate PDF Expense
+                                    Report</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{%url 'expence_report_pdf' %}" method="post">
+                                    {% csrf_token %}
+                                    <label for="">Start Date</label>
+                                    <input type="date" class="form-control" name="sdate" required>
+                                    <label for="">End Date</label>
+                                    <input type="date" class="form-control" name="edate" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Generate</button>
+                            </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-6 mt-3">
+            <div class="card" style="padding: 20px;">
+                <h5>Income Report</h5>
+
+                <div class="btn-group btn-group-toggle btn-group-edges" style="width: 300px; margin: auto;">
+                    <a class="button btn button-icon bg-info" data-bs-toggle="modal" data-bs-target="#income_exl"
+                        href="#">Excel</a>
+                    <a class="button btn button-icon bg-danger" data-bs-toggle="modal" data-bs-target="#income_pdf"
+                        href="#">PDF</a>
+                </div>
+
+
+                <!-- Modal income EXl and PDF -->
+                <div class="modal fade" id="income_exl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Generete Excel Income
+                                    Report</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{%url 'income_report_excel' %}" method="post">
+                                    {% csrf_token %}
+                                    <label for="">Start Date</label>
+                                    <input type="date" class="form-control" name="sdate" required>
+                                    <label for="">End Date</label>
+                                    <input type="date" class="form-control" name="edate" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Generete</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="income_pdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Generate PDF income
+                                    Report</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{%url 'income_report_pdf' %}" method="post">
+                                    {% csrf_token %}
+                                    <label for="">Start Date</label>
+                                    <input type="date" class="form-control" name="sdate" required>
+                                    <label for="">End Date</label>
+                                    <input type="date" class="form-control" name="edate" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Generate</button>
+                            </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © red defend
+            computers</span>
+        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Developed By <a
+                href="https://reddefend.ae/" target="_blank">red defend computers</a></span>
+    </div>
+</footer>
+</div>
+
+<script>
+    function DateCalcu() {
+        let sdate = document.getElementById("sdate").value
+        document.getElementById("edate").setAttribute("min", sdate)
+    }
+    function DateCalcu1() {
+        let sdate = document.getElementById("sdate1").value
+        document.getElementById("edate1").setAttribute("min", sdate)
+    }
+</script>
+
+{% endblock %}

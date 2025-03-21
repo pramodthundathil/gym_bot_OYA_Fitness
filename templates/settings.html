@@ -1,0 +1,450 @@
+{% extends "index.html" %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+    </script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+<div class="main-panel">
+    <div class="content-wrapper">
+
+        <div class="page-header">
+            <h3 class="page-title">Settings</h3>
+            {% for message in messages %}
+
+            <div class="alert {{message.tags}} alert-dismissible fade show" style="position:fixed;top:100px;z-index:1;"
+                role="alert">
+                <strong>Hi! </strong> {{message}}
+                <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+            </div>
+            {% endfor %}
+
+            <nav aria-label="breadcrumb">
+                <!-- <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Tables</a></li>
+            <li class="breadcrumb-item active" aria-current="page"> Basic tables </li>
+          </ol> -->
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card" style="height: 500px !important;overflow:scroll">
+                    <div class="card-body">
+                        <div class="item" style="position: sticky; top:10px;background-color:white">
+                            <h4 class="card-title">Batch</h4>
+                            <p class="card-description"> <button class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop1">Add Batch</button>
+                            </p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+
+                                    <tr>
+                                        <th>Batch</th>
+                                        <th>Batch Time</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in batch %}
+
+                                    <tr>
+                                        <td>{{i.Batch_Name}}</td>
+                                        <td>{{i.Batch_Time}}</td>
+                                        <td>
+                                            {% if i.Batch_Status == True %}
+                                            <label for="" class="badge badge-success">Live</label>
+                                            {%else%}
+                                            <label for="" class="badge badge-danger">Offline</label>
+
+
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropbatch"
+                                                class="btn btn-inverse-danger btn-icon" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="delete"><i class="mdi mdi-delete"
+                                                    style="font-size: 25px;"></i></a>
+                                            <a href="{%url 'EditBatch' i.id %}" class="btn btn-inverse-info btn-icon"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i
+                                                    style="font-size: x-large;" class="bi bi-pencil-square"></i></a>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Modal batch delete -->
+                                    <div class="modal fade" id="staticBackdropbatch" data-bs-backdrop="static"
+                                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+
+                                                <div class="modal-body">
+                                                    Do you want To delete batch ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">No</button>
+                                                    <a href="{%url 'Batch_Delete' i.id %}" type="button"
+                                                        class="btn btn-danger">Yes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card" style="height: 500px !important;overflow:scroll">
+                    <div class="card-body">
+                        <div class="item" style="position: sticky; top:10px;background-color:white">
+                            <h4 class="card-title">Subscription Period</h4>
+                            <p class="card-description"><button class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">Add Subscription Period</button>
+                            </p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table">
+                                <thead>
+                                    <tr>
+                                        <th>SubScription Period</th>
+
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for j in speriod %}
+
+                                    <tr>
+                                        <td>{{j.Period}} {{j.Category}}</td>
+                                        <td>
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropsub"
+                                                class="btn btn-inverse-danger btn-icon" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="delete"><i class="mdi mdi-delete"
+                                                    style="font-size: 25px;"></i></a>
+                                            <a href="{%url 'EditsubscriptionPeriod' j.id %}"
+                                                class="btn btn-inverse-info btn-icon" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="Edit"><i style="font-size: x-large;"
+                                                    class="bi bi-pencil-square"></i></a>
+
+                                        </td>
+                                    </tr>
+
+                                     <!-- Modal Sub Period delete -->
+                                     <div class="modal fade" id="staticBackdropsub" data-bs-backdrop="static"
+                                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                     aria-hidden="true">
+                                     <div class="modal-dialog">
+                                         <div class="modal-content">
+
+                                             <div class="modal-body">
+                                                 Do you want To delete Subscription Period ?
+                                             </div>
+                                             <div class="modal-footer">
+                                                 <button type="button" class="btn btn-secondary"
+                                                     data-bs-dismiss="modal">No</button>
+                                                 <a href="{%url 'SubScriptionPeriod_Delete' j.id %}" type="button"
+                                                     class="btn btn-danger">Yes</a>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card" style="height: 500px !important;overflow:scroll">
+                    <div class="card-body">
+                        <div class="item" style="position: sticky; top:10px;background-color:white">
+                            <h4 class="card-title">Subscriptions</h4>
+                            <p class="card-description"> <button class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop2">Add Subscription</button>
+                            </p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+
+                                    <tr>
+                                        <th>Subcription</th>
+
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in Sub_type %}
+
+                                    <tr>
+                                        <td>{{i.Type}}</td>
+                                        <td>
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropsubperitype"
+                                                class="btn btn-inverse-danger btn-icon" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="delete"><i class="mdi mdi-delete"
+                                                    style="font-size: 25px;"></i></a>
+                                            <a href="{%url 'EditSub' i.id %}" class="btn btn-inverse-info btn-icon"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i
+                                                    style="font-size: x-large;" class="bi bi-pencil-square"></i></a>
+
+                                        </td>
+                                    </tr>
+                                        <!-- Modal Sub Period delete -->
+                                        <div class="modal fade" id="staticBackdropsubperitype" data-bs-backdrop="static"
+                                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+   
+                                                <div class="modal-body">
+                                                    Do you want To delete Subscription Type ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">No</button>
+                                                    <a href="{%url 'SubScriptionType_Delete' i.id %}" type="button"
+                                                        class="btn btn-danger">Yes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card" style="height: 500px !important;overflow:scroll">
+                    <div class="card-body">
+                        <div class="item" style="position: sticky; top:10px;background-color:white">
+                            <h4 class="card-title">Change Password</h4>
+                            <p class="card-description">
+                            </p>
+                        </div>
+                        <div class="table-responsive">
+                            <form action="{%url 'ChangePassword' %}" method="post">
+                                {% csrf_token %}
+                                <label for="">Old Password</label>
+                                <input type="password" name="oldpassword" class="form-control"><br><br>
+                                <label for="">New Password</label>
+                                <input type="password" name="newpassword1" class="form-control"><br><br>
+                                <label for="">Confirm Password</label>
+                                <input type="password" name="newpassword2" class="form-control"><br><br>
+                                <button type="submit" class="btn btn-primary">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card" style="height: 500px !important;overflow:scroll">
+                    <div class="card-body">
+                        <div class="item" style="position: sticky; top:10px;background-color:white">
+                            <h4 class="card-title text-danger">Device Configuration</h4>
+                            <p class="card-description">
+                            </p>
+                        </div>
+                        <div class="table-responsive">
+                            <form action="{%url 'DeviceConfig' config.id %}" method="post">
+                                {% csrf_token %}
+                                <label for="">JWT IP</label>
+                                <input type="text" name="jwtip" value="{{config.JWT_IP}}" class="form-control"><br><br>
+                                <label for="">JWT PORT</label>
+                                <input type="text" name="jwtport" value="{{config.JWT_PORT}}"
+                                    class="form-control"><br><br>
+                                <label for="">Callback IP</label>
+                                <input type="text" name="callip" value="{{config.Call_Back_IP}}"
+                                    class="form-control"><br><br>
+                                <label for="">Callback Port</label>
+                                <input type="text" name="callport" value="{{config.Call_Back_Port}}"
+                                    class="form-control"><br><br>
+                                <label for="">Admin Username</label>
+                                <input type="text" name="adminusr" value="{{config.Admin_Username}}"
+                                    class="form-control"><br><br>
+                                <label for="">Admin Password</label>
+                                <input type="text" name="adminpswd" value="{{config.Admin_Password}}"
+                                    class="form-control"><br><br>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <!-- model strat -->
+
+    <!-- Button trigger modal -->
+
+    <!-- Modal 1-->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Add Subscription Period</h5>
+                    <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    </p>
+                                    <form class="forms-sample" action="{%url 'SubscriptionPeriodSave'%}" method="post">
+                                        {% csrf_token %}
+
+                                        {% for field in sub_form %}
+
+                                        <div class="form-group">
+                                            <label for="exampleInputUsername1">{{field.label}}</label>
+                                            {{field}}
+                                        </div>
+                                        {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- model 2 -->
+    <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Add Batch</h5>
+                    <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    </p>
+                                    <form class="forms-sample" action="{%url 'BatchSave'%}" method="post">
+                                        {% csrf_token %}
+                                        {% for field in form %}
+
+                                        <div class="form-group">
+                                            <label for="exampleInputUsername1">{{field.label}}</label>
+                                            {{field}}
+                                        </div>
+                                        {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal 3-->
+    <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Add Subscription Period</h5>
+                    <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    </p>
+                                    <form class="forms-sample" action="{%url 'SubscriptionTypeSave' %}" method="post">
+                                        {% csrf_token %}
+
+                                        {% for field in typesub_form %}
+
+                                        <div class="form-group">
+                                            <label for="exampleInputUsername1">{{field.label}}</label>
+                                            {{field}}
+                                        </div>
+                                        {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © red defend computers
+                <d</span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Developed By <a
+                            href="https://reddefend.ae/" target="_blank">red defend computers</a></span>
+        </div>
+    </footer>
+</div>
+
+{% endblock %}

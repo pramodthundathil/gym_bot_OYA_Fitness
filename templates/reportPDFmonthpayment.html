@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Member Report</title>
+    <style>
+      table{
+            width:100%;
+            border-collapse: collapse;
+        }
+        table, td, th{
+            border: 1px solid black;
+            height: 30px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h3 style="text-align: center;">Member Payment Data month {{date}}</h3>
+    <h4>Number {{Token}}</h4>
+    <table>
+        <tr>
+            <th>Sl No</th>
+            <th>Member</th>
+            <th>Subscriptin</th>
+            <th>Amount</th>
+            <th>Payement Date</th>
+          
+            
+        </tr>
+        {% for i in payment  %}
+          
+        <tr>
+            <th>{{forloop.counter}}</th>
+            <td>{{i.Member}}</td>
+            <td>{{i.Subscription_ID}}</td>
+            <td>{{i.Amount}}</td>
+            <td>{{i.Payment_Date}}</td>
+            
+        </tr>
+        {% endfor %}
+
+    </table>
+    
+</body>
+</html>

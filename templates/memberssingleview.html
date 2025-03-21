@@ -1,0 +1,453 @@
+{% extends "index.html" %}
+{% load static %}
+{% static "images" as baseurl %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<div class="main-panel">
+  <div class="content-wrapper pb-0">
+    {% for message in messages %}
+
+    <div class="alert {{message.tags}} alert-dismissible fade show " style="position:fixed;top:100px;z-index:1;"
+      role="alert">
+      <strong>Information!</strong> {{message}}
+      <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="alert"
+        aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    <div class="page-header flex-wrap">
+      <h3 class="mb-0"> Member Details <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block">Members.</span>
+      </h3>
+      <!-- <div class="d-flex">
+        <button type="button" class="btn btn-sm bg-white btn-icon-text border">
+          <i class="mdi mdi-email btn-icon-prepend"></i> Email </button>
+        <button type="button" class="btn btn-sm bg-white btn-icon-text border ml-3">
+          <i class="mdi mdi-printer btn-icon-prepend"></i> Print </button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+          class="btn btn-sm ml-3 btn-success"> Add Member </button>
+      </div> -->
+    </div>
+
+    <div class="row">
+      <div class="col-xl-6 col-sm-6 grid-margin stretch-card" style="height: auto !important;">
+        <div class="card" style="height: 500px;">
+          <div class="card-body">
+            <div class="card-title font-weight-medium"> {{member.First_Name}} {{member.Last_Name}} </div>
+            <p class="text-muted"> Member Since: <span class="badge badge-info">{{member.Registration_Date}}</span> </p>
+            <div class="d-flex flex-wrap border-bottom py-2 border-top justify-content-between">
+              <img class="survey-img mb-lg-3" src="{{member.Photo.url}}" alt=""
+                style="width:60%;height:200px;display:block;margin:auto;object-fit:contain" />
+            </div>
+            <div class="d-flex flex-wrap border-bottom py-2 justify-content-center text-center">
+              <!-- <img class="survey-img mb-lg-3" src="assets/images/dashboard/img_1.jpg" alt="" /> -->
+              <div class="pt-2">
+                <h5 class="mb-0"><span class="h6">DOB:</span> {{member.Date_Of_Birth}} </h5>
+                <p class="mb-0 text-muted">{{member.Address}}</p>
+                <h5 class="mb-0"><span class="h6">Mob: </span>{{member.Mobile_Number}}</h5>
+              </div>
+            </div>
+            <!-- <div class="d-flex flex-wrap border-bottom py-2 justify-content-between">
+              <img class="survey-img mb-lg-3" src="assets/images/dashboard/img_2.jpg" alt="" />
+              <div class="pt-2">
+                <h5 class="mb-0">House on the Clarita</h5>
+                <p class="mb-0 text-muted">Business Survey</p>
+                <h5 class="mb-0">$459/mo</h5>
+              </div>
+            </div> -->
+            
+
+            <form action="{%url 'ProfilephotoUpdate' member.id %}" enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              <input type="file"   name="photo" required class="text-black mt-3 d-block font-weight-medium h6">
+              <button type="submit" class="btn btn-info">Upload New Photo</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-6 col-sm-6 grid-margin stretch-card" style="height: auto !important;">
+        <div class="card" style="height: 500px;">
+          <div class="card-body">
+            <div class="card-title font-weight-medium"> {{member.First_Name}} {{member.Last_Name}}'s ID CARD </div>
+            <p class="text-muted"> Member Since: <span class="badge badge-info">{{member.Registration_Date}}</span> </p>
+            <div class="d-flex flex-wrap border-bottom py-2 border-top justify-content-between">
+              {% if member.Id_Upload == None or member.Id_upload == null %}
+              <div class="survey-img mb-lg-3" src="" alt=""
+                style="width:60%;height:200px;display:block;margin:auto;object-fit:contain">No ID Available</div>
+                
+                {% else %}
+
+                  <img class="survey-img mb-lg-3" src="{{member.Id_Upload.url}}" alt=""
+                style="width:60%;height:200px;display:block;margin:auto;object-fit:contain" />
+                {% endif %}
+            </div>
+            <div class="d-flex flex-wrap border-bottom py-2 justify-content-center text-center">
+              <!-- <img class="survey-img mb-lg-3" src="assets/images/dashboard/img_1.jpg" alt="" /> -->
+              <div class="pt-2">
+                <h5 class="mb-0"><span class="h6">Subscription Start Date</span> {{subscription.Subscribed_Date}}</h5>
+                <p class="mb-0 text-muted">.</p>
+                <h5 class="mb-0"><span class="h6">Subscription End Date: </span>{{subscription.Subscription_End_Date}}</h5>
+              </div>
+            </div>
+            <!-- <div class="d-flex flex-wrap border-bottom py-2 justify-content-between">
+              <img class="survey-img mb-lg-3" src="assets/images/dashboard/img_2.jpg" alt="" />
+              <div class="pt-2">
+                <h5 class="mb-0">House on the Clarita</h5>
+                <p class="mb-0 text-muted">Business Survey</p>
+                <h5 class="mb-0">$459/mo</h5>
+              </div>
+            </div> -->
+            <form action="{%url 'IdphotoUpdate' member.id %}" enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              <input type="file" name="photo" required class="text-black mt-3 d-block font-weight-medium h6">
+              <button type="submit" class="btn btn-info">Upload New ID</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-12 col-sm-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body px-0 overflow-auto">
+            <h4 class="card-title pl-4">Member Information</h4>
+            <div class="table-responsive">
+              <div class="row">
+                <div class="col-md-6 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Personal Information</h4>
+                      <p class="card-description">Edit Infomation</p>
+                      <form class="forms-sample" action="{%url 'UpdateMember' member.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          <label for="exampleInputUsername1">First Name</label>
+                          <input type="text" value="{{member.First_Name}}" name="fname" class="form-control"
+                            id="exampleInputUsername1" placeholder="Username" />
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputUsername1">Last Name</label>
+                          <input type="text" value="{{member.Last_Name}}" name="lname" class="form-control"
+                            id="exampleInputUsername1" placeholder="Username" />
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Email address</label>
+                          <input type="email" value="{{member.Email}}" name="email" class="form-control"
+                            id="exampleInputEmail1" placeholder="Email" />
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Phone Number</label>
+                          <input type="number" value="{{member.Mobile_Number}}" name="phone" class="form-control"
+                            id="exampleInputPassword1" placeholder="Password" />
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Date Of Birth</label>
+                          <input type="date" value="{{member.Date_Of_Birth}}" name="dob" required class="form-control"
+                            id="exampleInputPassword1" placeholder="Password" />
+                        </div>
+
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Address</label>
+                          <input type="text" value="{{member.Address}}" name="address" class="form-control"
+                            id="exampleInputPassword1" placeholder="Password" />
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputConfirmPassword1">Medical History</label>
+                          <input type="textarea" value="{{member.Medical_History}}" name="mhistory" class="form-control"
+                            id="exampleInputConfirmPassword1" placeholder="Password" />
+                        </div>
+
+                        <button class="btn btn-primary mr-2" data-bs-target="#staticBackdrop1" data-bs-toggle="modal">
+                          Update </button>
+                        <!-- <button class="btn btn-light">Cancel</button> -->
+                        <!-- update model start -->
+
+                        <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false"
+                          tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+
+                              <div class="modal-body">
+                                Do you Want To Update Member ?
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <button type="submit" class="btn btn-secondary">Yes</button>
+
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- update confirm model end  -->
+                      </form>
+
+                      <br><br><br>
+
+                      <div class="form-group">
+                        <label for="exampleInputConfirmPassword1">Access Token <small>Change Access
+                            Token</small></label>
+                        <input type="text" readonly value="{{member.Access_Token_Id}}"
+                          class="form-control border-warning" id="exampleInputConfirmPassword1" placeholder="Token" />
+                      </div>
+                      <button data-bs-toggle="modal" data-bs-target="#staticBackdrop2" class="btn btn-warning mr-2">
+                        Change </button>
+                      <!-- access change model -->
+
+                      <!-- Button trigger modal -->
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="staticBackdropLabel">Change Access Token</h5>
+                              <button class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <form action="{%url 'UpdateAccessToken' member.id %}" method="post">
+                                {% csrf_token %}
+                                <label for="">Enter New Token:</label>
+                                <input type="text" name="newtkn" value="{{member.Access_Token_Id}}"
+                                  class="form-control border-warning">
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary">Change</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Subscription Information</h4>
+                      <p class="card-description">Edit Infomation</p>
+                      <form class="forms-sample">
+                        <div class="form-group">
+                          <label for="exampleInputUsername1">Subscription</label>
+                          <input type="text" class="form-control" id="exampleInputUsername1" value="{{subscription}}"
+                            readonly placeholder="Username" />
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Amount (AED)</label>
+                          <input type="number" class="form-control" value="{{subscription.Amount}}"
+                            id="exampleInputEmail1" readonly placeholder="Email" />
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Subscribed Date</label>
+                          <input type="text" class="form-control" value="{{subscription.Subscribed_Date}}" readonly
+                            id="exampleInputPassword1" placeholder="Password" />
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputPassword1">Subscription End Date</label>
+                          <input type="text" class="form-control" value="{{subscription.Subscription_End_Date}}"
+                            readonly id="exampleInputPassword1" placeholder="Password" />
+                        </div>
+                        <div class="form-check form-check-flat form-check-primary">
+                          <label class="form-check-label">
+
+                            {% if member.Active_status == True %}
+                            Member Status : <span class="badge bg-success">Active</span>
+                            {%else%}
+                            Member Status : <span class="badge bg-success">Active</span>
+                            {% endif %}
+                            <br><br>
+                            {% if subscription.Payment_Status == True %}
+                            Payment Status: <span class="badge bg-success">Done</span>
+                            {%else%}
+                            Payment Status: <span class="badge bg-danger">Not Done</span>
+                            {% endif %}
+                            <br><br>
+
+                            {% if access.Status == True %}
+                            Access Status: <span class="badge bg-success">Granded</span>
+                            <small> valid Till: {{access.Validity_Date}}</small>
+                            {%else%}
+                            Access Status: <span class="badge bg-danger">No Access</span>
+                            <small>
+                              Expied on: {{access.Validity_Date}}
+                            </small>
+                            {% endif %}
+
+                        </div>
+                        <br><br>
+                        <a href="{%url 'ChangeSubscription' member.id %}" class="btn btn-primary mr-2 text-white">Change
+                          Subscription </a><br><br>
+                        <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn btn-danger">Delete
+                          Member</a>
+                        <br><br>
+                        <a href="{%url 'AddNewPaymentFromMember' member.id %}" class="btn btn-outline-info">Add
+                          Payment</a>
+                        <a  data-bs-toggle="modal" data-bs-target="#staticBackdrop10" class="btn btn-info">View Payment History</a>
+                        <!-- Subscription Chnage Model start  -->
+
+                        <!-- Subscription Chnage Model end  -->
+
+                        <!-- delete popup -------------- -->
+
+                        <!-- Button trigger modal -->
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                          tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+
+                              <div class="modal-body">
+                                Do you Want To delete Member ?
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <a href="{%url 'DeleteMember' member.id %}" type="button" class="btn btn-danger">Yes</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- end deletepopup ---------------- -->
+
+                        <!-- Modal for payment dispaly -->
+                        <div class="modal fade" id="staticBackdrop10" data-bs-backdrop="static" data-bs-keyboard="false"
+                          tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title fs-5" id="exampleModalToggleLabel">Payment History {{member}}</h4>
+                                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                              </div>
+
+                              <div class="modal-body">
+
+                                <div class="page-header flex-wrap">
+                                  <h3 class="mb-0"> All Payments <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block"></span>
+                                  </h3>
+                                  <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+              aria-label="Close"></button>
+                              </div>
+                      
+                              <div class="row">
+                                  <div class="col-xl-12 col-sm-6 grid-margin stretch-card">
+                                      <div class="card">
+                                        <div class="card-body px-0 overflow-auto">
+                                          <h4 class="card-title pl-4">All Payments</h4>
+                                          <div class="table-responsive">
+                                            <table class="table">
+                                              <thead class="bg-light">
+                                                <tr>
+                                                
+                                                  <th>Payment Amount</th>
+                                                  <th>Mode Of Payment</th>
+                                                  <th>Date</th>
+                                                  <th>Status</th>
+                                                  <th>Action</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                {% for i in payments %}
+                                                  
+                                                <tr>
+                                                  
+                                                  <td>
+                                                    AED {{i.Amount}}
+                                                    {% if i.Payment_Balance > 0 %}
+                                                    <br>
+                                                    <small class="text-danger">Payment Balance AED {{i.Payment_Balance}}</small> 
+                                                    {% endif %}
+                                                  </td>
+                                                  <td>{{i.Mode_of_Payment}}</td>
+                                                  <td>
+                                                  {{i.Payment_Date}}
+                                                  </td>
+                                                  <td>
+                                                    <div class="badge badge-inverse-success"> Completed </div>
+                                                  </td>
+                                                  <td>
+                                                    <a href="{%url 'ReceiptGenerate' i.id %}" target="_blank" class="btn btn-outline-warning">Get Receipt</a>
+                      
+                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdropsubperitype" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="delete" class="btn btn-outline-danger btn-sm"><i class="mdi mdi-delete"
+                                                      style="font-size: 15px;"></i></a>
+                                                      {% if request.user.groups.all.0.name == "admin" %}
+                                                      <a href="{%url 'EditPayment' i.id %}" class="btn btn-inverse-info btn-icon"
+                                                                      data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i
+                                                                          style="font-size: x-large;" class="bi bi-pencil-square"></i></a>
+                                                                        {% endif %}
+                                                  </td>
+                                                </tr>
+                                                    <!-- Modal Sub Period delete -->
+                                                    <div class="modal fade" id="staticBackdropsubperitype" data-bs-backdrop="static"
+                                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                              
+                                                            <div class="modal-body">
+                                                                Do you Want To delete payment ?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">No</button>
+                                                                <a href="{%url 'DeletePayment' i.id %}" type="button"
+                                                                    class="btn btn-danger">Yes</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                      
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                          <!-- <a class="text-black mt-3 d-block pl-4" href="#">
+                                            <span class="font-weight-medium h6">View all Payments</span>
+                                            <i class="mdi mdi-chevron-right"></i></a> -->
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div> 
+                                
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <!-- <a href="{%url 'DeleteMember' member.id %}" type="button" class="btn btn-danger">Yes</a> -->
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <br><br>
+                        <a href="{%url 'ExtendAccessToGate' member.id %}" class="btn btn-outline-warning">Extend
+                          Access</a>
+                        <a href="{%url 'BlockAccess' member.id %}" class="btn btn-outline-dark">Block Access</a>
+
+
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+          <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © red defend
+            computers</span>
+          <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Developed By <a
+              href="https://reddefend.ae/" target="_blank">red defend computers</a></span>
+        </div>
+      </footer>
+    </div>
+
+   
+  
+    {% endblock %}

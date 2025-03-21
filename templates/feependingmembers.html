@@ -1,0 +1,111 @@
+{% extends "index.html" %}
+{% load static %}
+{% static "images" as baseurl %}
+
+{% block content %}
+
+<div class="main-panel">
+    <div class="content-wrapper pb-0">
+        {% for message in messages  %}
+
+        <div class="alert {{message.tags}} alert-dismissible fade show " style="position:fixed;top:100px;z-index:1;" role="alert">
+            <strong>Information!</strong> {{message}}
+            <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="alert"
+                aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        <div class="page-header flex-wrap">
+            <h3 class="mb-0"> Fee Pending Members <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block"></span>
+            </h3>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-sm-6 grid-margin stretch-card">
+                <div class="card" style="padding: 20px;">
+                  <div class="card-body px-0 overflow-auto">
+                    <h4 class="card-title pl-4">Fee Pending Members</h4>
+                    <div class="table-responsive">
+                      <table class="table" id="memberTable">
+                        <thead class="bg-light">
+                          <tr>
+                            <th>Sl No</th>
+                            <th>Member</th>
+                            <th>Subscrption Type</th>
+                            <th>Subscrption End Date</th>
+                            <th>Status</th>
+                            <th>View</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for sub in subscribers  %}  
+                          {% if sub.Payment_Status == False %}
+                          <tr>
+                            <th>{{forloop.counter}}</th>
+                            <td>
+                              <div class="d-flex align-items-center">
+                                <!-- <img src="{{sub.Member.Photo.url}}" alt="image" /> -->
+                                <div class="table-user-name ml-3">
+                                  <b>{{sub.Member.First_Name}} {{sub.Member.Last_Name}}</b>
+                                  <br>
+                                  {% if sub.Payment_Status == False %}
+                                  <small class="text-danger"> Payment Not Completed</small>
+                                  {% else %}
+                                  <small> Payment Done</small>
+        
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </td>
+                            <td>{{sub.Type_Of_Subscription}}</td>
+                            <td>
+                              {{sub.Subscription_End_Date}}
+                            </td>
+                            <td>
+                              {% if sub.Payment_Status == False %}
+                              <div class="badge badge-inverse-danger"> Inactive </div>
+                              {% else %}
+                              <div class="badge badge-inverse-success"> Active </div>
+                              {% endif %}
+                            </td>
+                            <td>
+                              {% if sub.Member %}
+                                <a href="{%url 'MembersSingleView' sub.Member.id %}" class="btn btn-outline-info">View</a>
+                                {% else%} 
+                                <span>No Member</span>
+                                {% endif %}
+                            </td>
+                          </tr>
+                          {% endif %}
+                          {% endfor %}
+                          
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div> 
+    </div>
+</div>
+<!-- jQuery (must be loaded first) -->
+<script src="{%static 'assets\js\jquery-3.6.0.min.js' %}"></script>
+
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="{%static 'assets\css\jquery.dataTables.min.css' %}">
+
+<!-- DataTables JS (load after jQuery) -->
+<script src="{%static 'assets\js\jquery.dataTables.min.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        if ($.fn.DataTable) {
+            console.log("DataTable is loaded.");
+            $('#memberTable').DataTable();
+        } else {
+            console.error("DataTable is not loaded.");
+        }
+    });
+</script>
+{% endblock %}
