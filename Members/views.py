@@ -215,7 +215,11 @@ def Member(request):
 def MembersSingleView(request,pk):
     member = MemberData.objects.get(id = pk)
     subscription = Subscription.objects.get(Member = member)
-    access = AccessToGate.objects.get(Member = member)
+    try:
+        access = AccessToGate.objects.get(Member = member)
+    except:
+        access = AccessToGate.objects.create(Member = member,Subscription = subscription,Validity_Date = datetime.now()) 
+        access.save()
     sub_form = SubscriptionAddForm()
     payments = Payment.objects.filter(Member = member)
     

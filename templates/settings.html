@@ -64,7 +64,7 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropbatch"
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropbatch{{i.id}}"
                                                 class="btn btn-inverse-danger btn-icon" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="delete"><i class="mdi mdi-delete"
                                                     style="font-size: 25px;"></i></a>
@@ -75,7 +75,7 @@
                                     </tr>
 
                                     <!-- Modal batch delete -->
-                                    <div class="modal fade" id="staticBackdropbatch" data-bs-backdrop="static"
+                                    <div class="modal fade" id="staticBackdropbatch{{i.id}}" data-bs-backdrop="static"
                                         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                         aria-hidden="true">
                                         <div class="modal-dialog">
@@ -126,7 +126,7 @@
                                     <tr>
                                         <td>{{j.Period}} {{j.Category}}</td>
                                         <td>
-                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropsub"
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropsub{{j.id}}"
                                                 class="btn btn-inverse-danger btn-icon" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="delete"><i class="mdi mdi-delete"
                                                     style="font-size: 25px;"></i></a>
@@ -139,7 +139,7 @@
                                     </tr>
 
                                      <!-- Modal Sub Period delete -->
-                                     <div class="modal fade" id="staticBackdropsub" data-bs-backdrop="static"
+                                     <div class="modal fade" id="staticBackdropsub{{j.id}}" data-bs-backdrop="static"
                                      data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                      aria-hidden="true">
                                      <div class="modal-dialog">
@@ -196,7 +196,7 @@
                                     <tr>
                                         <td>{{i.Type}}</td>
                                         <td>
-                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropsubperitype"
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdropsubperitype{{i.id}}"
                                                 class="btn btn-inverse-danger btn-icon" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="delete"><i class="mdi mdi-delete"
                                                     style="font-size: 25px;"></i></a>
@@ -207,7 +207,7 @@
                                         </td>
                                     </tr>
                                         <!-- Modal Sub Period delete -->
-                                        <div class="modal fade" id="staticBackdropsubperitype" data-bs-backdrop="static"
+                                        <div class="modal fade" id="staticBackdropsubperitype{{i.id}}" data-bs-backdrop="static"
                                         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                         aria-hidden="true">
                                         <div class="modal-dialog">
