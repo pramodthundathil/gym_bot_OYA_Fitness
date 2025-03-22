@@ -529,6 +529,23 @@ def PostNewPayment(request,pk):
 
     return redirect("Payments")
 
+from .models import BalancePayment
+
+def make_balance_payment(request, pk):
+    payment = Payment.objects.get(id=pk)
+    balance = payment.Payment_Balance
+    if request.method == "POST":
+        payment.Payment_Status = True
+        payment.Payment_Balance = 0
+        payment.save() 
+        balance_bill = BalancePayment.objects.create(payment = payment,Amount = balance)
+        balance_bill.save()
+
+        income = Income.objects.create(perticulers = f"Payment from {payment.Member} by {payment.Mode_of_Payment}",amount = balance)
+        income.save()
+        messages.success(request,"Balance Payment Updated for member {}".format(payment.Member))
+        return redirect("AllPayments")
+
 @login_required(login_url='SignIn')
 def AddPaymentFromMemberTab(request,pk):
     member = MemberData.objects.get(id = pk)
@@ -621,6 +638,93 @@ def AddPaymentFromMemberTab(request,pk):
 #         return HttpResponse("we are some erros <pre>" + html + '</pre>')
 #     return response
 
+
+def get_balance_receipt(request, pk):
+    """
+    Generate a professional PDF receipt for a payment.
+    Uses WeasyPrint for higher quality PDF generation with better CSS support.
+    """
+    # Get necessary data
+    logo = Logo.objects.get(id=1)
+    balance_ = BalancePayment.objects.get(id=pk)
+    payment = balance_.payment
+    member = payment.Member
+    amount = balance_.Amount
+    payid = pk
+    payment_date = payment.Payment_Date
+    
+    try:
+        sub_start = payment.Subscription_ID.Subscribed_Date
+        sub_end = payment.Subscription_ID.Subscription_End_Date
+        period = payment.Subscription_ID.Period_Of_Subscription
+    except:
+        sub_start = "N/A"
+        sub_end = "N/A"
+        period = "N/A"
+    
+    # Generate barcode for receipt
+    import barcode
+    from barcode.writer import ImageWriter
+    import base64
+    from io import BytesIO
+    
+    # Create EAN13 barcode (you can use other formats too)
+    ean = barcode.get_barcode_class('code128')
+    ean_barcode = ean(f'OYAFITNESS{payid}', writer=ImageWriter())
+    
+    # Convert barcode to base64 for embedding in HTML
+    buffer = BytesIO()
+    ean_barcode.write(buffer)
+    buffer.seek(0)
+    barcode_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    
+    # Prepare context for template
+    context = {
+       "member": member,
+       "amount": amount,
+       "payid": payid,
+       "payment_date": payment_date,
+       "sub_start": sub_start,
+       "sub_end": sub_end,
+       "period": period,
+       "barcode_image": barcode_image,
+       "logo": logo,
+       "balance":"balance"
+    }
+    
+    # Render template to HTML
+    template_path = "receipt.html"
+    template = get_template(template_path)
+    html = template.render(context)
+    
+    # Generate PDF using WeasyPrint for better CSS support
+    try:
+        from weasyprint import HTML, CSS
+        from django.conf import settings
+        import os
+        
+        # Create response object
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
+        
+        # Generate PDF with WeasyPrint
+        base_url = request.build_absolute_uri('/')
+        pdf = HTML(string=html, base_url=base_url).write_pdf()
+        
+        # Write PDF to response
+        response.write(pdf)
+        return response
+        
+    except ImportError:
+        # Fallback to xhtml2pdf if WeasyPrint is not available
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        
+        if pisa_status.err:
+            return HttpResponse("We encountered some errors <pre>" + html + '</pre>')
+        return response
+
 @login_required(login_url='SignIn')
 def ReceiptGenerate(request, pk):
     """
@@ -670,7 +774,8 @@ def ReceiptGenerate(request, pk):
        "sub_end": sub_end,
        "period": period,
        "barcode_image": barcode_image,
-       "logo": logo
+       "logo": logo,
+       "balance":" "
     }
     
     # Render template to HTML

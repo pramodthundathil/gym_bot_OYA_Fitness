@@ -45,9 +45,9 @@
       <h3 class="mb-0"> Payments <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block">Payment Details</span>
       </h3>
       <div class="d-flex">
-        <!-- <button type="button" class="btn btn-sm bg-white btn-icon-text border">
-                    <i class="mdi mdi-email btn-icon-prepend"></i> Email </button>
-                  <button type="button" class="btn btn-sm bg-white btn-icon-text border ml-3">
+        <a href="{%url 'AllPayments' %}" type="button" class="btn btn-sm bg-white btn-icon-text border">
+                    <i class="mdi mdi-cash-multiple"></i> Go to All Payments </a>
+                  <!-- <button type="button" class="btn btn-sm bg-white btn-icon-text border ml-3">
                     <i class="mdi mdi-printer btn-icon-prepend"></i> Print </button> -->
         <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
           class="btn btn-sm ml-3 btn-success"> <i class="mdi mdi-plus text-lg"></i> Add Payment </button>
@@ -82,7 +82,14 @@
                          <b>{{forloop.counter}}.  </b>
                         <div class="table-user-name ml-3">
                           <p class="mb-0 font-weight-medium"> {{i.Member}} </p>
+                          {% if i.Payment_Balance > 0 %}
+                          <small class="text-warning"> Payment Partially Done</small>
+
+
+                          {% else %}
                           <small> Payment done</small>
+                      {% endif %}
+
                         </div>
                       </div>
                     </td>

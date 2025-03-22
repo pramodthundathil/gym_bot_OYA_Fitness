@@ -70,7 +70,7 @@ class Subscription(models.Model):
     Amount = models.IntegerField()
     Subscribed_Date = models.DateField(auto_now_add=False)
     Subscription_End_Date = models.DateField(auto_now_add=False,null=True,blank=True)
-    Batch = models.ForeignKey(Batch_DB, on_delete=models.SET_NULL,null=True, blank=True)
+    Batch = models.ForeignKey(Batch_DB, on_delete=models.SET_NULL,null=True, blank=True, related_name="batch_time")
     Batch_Status = models.BooleanField(default=True)
     Payment_Status = models.BooleanField(default=False)
 
@@ -80,13 +80,18 @@ class Subscription(models.Model):
 
 class Payment(models.Model):
     Member = models.ForeignKey(MemberData, on_delete=models.CASCADE)
-    Subscription_ID = models.ForeignKey(Subscription, on_delete=models.SET_NULL,null=True,blank=True)
+    Subscription_ID = models.ForeignKey(Subscription, on_delete=models.SET_NULL,null=True,blank=True, related_name="Subscription_payment")
     Amount = models.IntegerField(null=True, blank=True)
     Mode_of_Payment = models.CharField(max_length = 255, null=True, blank= True, choices = (("Cash","Cash"),("Bank Transfer","Bank Transfer"),("Card","Card")) )
     Payment_Date = models.DateField(auto_now_add=False,null=True,blank=True)
     Payment_Balance = models.FloatField(default=0)
     Payment_Status = models.BooleanField(default=False)
     Access_status = models.BooleanField(default=False)
+
+class BalancePayment(models.Model):
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name="balance_payment")
+    Amount = models.FloatField()
+    Payment_Date = models.DateField(auto_now_add=True) 
 
 class AccessToGate(models.Model):
     Member = models.ForeignKey(MemberData, on_delete=models.CASCADE)

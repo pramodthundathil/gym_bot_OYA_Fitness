@@ -46,5 +46,9 @@ urlpatterns = [
 
     path("FeePendingMembers",views.FeePendingMembers,name="FeePendingMembers"),
 
+    path("make_balance_payment/<int:pk>",views.make_balance_payment,name="make_balance_payment"),
+    path("get_balance_receipt/<int:pk>",views.get_balance_receipt,name="get_balance_receipt"),
+    
+
     
 ]
