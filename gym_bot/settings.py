@@ -160,18 +160,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# AWS_ACCESS_KEY_ID = "AKIAWLVNT2SPVAOHJHFM"
-# AWS_SECRET_ACCESS_KEY = "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"
-# AWS_STORAGE_BUCKET_NAME = 'johnsconcept'
-# AWS_S3_SIGNATURE_NAME = 's3v4',
-# AWS_S3_REGION_NAME = 'ap-south-1'
-# AWS_S3_FILE_OVERWRITE = False
-# # AWS_DEFAULT_ACL =  None
-# AWS_S3_VERIFY = True
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
