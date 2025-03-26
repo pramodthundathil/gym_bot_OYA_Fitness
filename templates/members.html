@@ -80,7 +80,7 @@
                   <tr>
                     <td>
                       <div class="d-flex align-items-center">
-                        <!-- <img src="{{sub.Member.Photo.url}}" alt="image" /> -->
+                        <img src="{{sub.Member.Photo.url}}" alt="image" id="photoclient" />
                         <b>{{forloop.counter}}. </b>
                         <div class="table-user-name ml-3">
                           <p class="mb-0 font-weight-medium"> {{sub.Member.First_Name}} {{sub.Member.Last_Name}} </p>
@@ -131,7 +131,7 @@
                 <div class="col-7 col-sm-8">
                   <div class="row align-items-center">
                     <div class="col-sm-4">
-                      <img src="{{i.Photo.url}}" alt="" />
+                      <img src="{{i.Photo.url}}" alt="" id="photoclient" />
                     </div>
                     <div class="col-sm-8 pr-0 pl-sm-0">
                       <span>{{i.Registration_Date}}</span>
@@ -549,7 +549,21 @@
                         <div class="form-group row">
                           <label class="col-sm-3 col-form-label">{{field.label}}</label>
                           <div class="col-sm-9">
-                            {{field}}
+                            {% if field.name == 'Photo' %}
+                            <!-- <input type="file" required class="form-control" name="profile_pic" id="profilePicInput" accept="image/*" capture="camera" style="display:none;"> -->
+                             {{field}}
+                            <div>
+                                <button type="button" id="uploadButton" class="btn btn-primary mb-3">Take Profile Picture</button>
+                                <video id="video" width="320" height="240" autoplay style="display:none;"></video><br>
+                                <button id="capture" style="display:none;" class="btn btn-success mb-3">Capture Photo</button>
+                                <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+                                <img id="capturedImage" src="" alt="Captured Image" style="display:none;"><br>
+                                <button id="recapture" style="display:none;" class="btn btn-warning">Recapture</button>
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                            
                           </div>
                         </div>
                       </div>
@@ -596,5 +610,59 @@
   </div>
 </div>
 
+<script>
+  document.getElementById('uploadButton').addEventListener('click', function() {
+      // Show video and capture button
+      document.getElementById('video').style.display = 'block';
+      document.getElementById('capture').style.display = 'block';
+  
+      // Access camera
+      navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function(stream) {
+              const video = document.getElementById('video');
+              video.srcObject = stream;
+              video.play();
+          })
+          .catch(function(err) {
+              console.log("Error accessing camera: " + err);
+          });
+  });
+  
+  document.getElementById('capture').addEventListener('click', function() {
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+  
+      // Capture image from video
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+      // Convert canvas image to file
+      canvas.toBlob(function(blob) {
+          const file = new File([blob], "profile_pic.png", { type: "image/png" });
+          
+          // Set file to Django form input
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          document.getElementById('profilePic').files = dataTransfer.files;
+  
+      }, "image/png");
+  
+      // Show captured image
+      document.getElementById('capturedImage').src = canvas.toDataURL("image/png");
+      document.getElementById('capturedImage').style.display = 'block';
+  
+      // Hide video and capture button, show recapture button
+      video.style.display = 'none';
+      document.getElementById('capture').style.display = 'none';
+      document.getElementById('recapture').style.display = 'block';
+  });
+  
+  document.getElementById('recapture').addEventListener('click', function() {
+      document.getElementById('video').style.display = 'block';
+      document.getElementById('capture').style.display = 'block';
+      document.getElementById('capturedImage').style.display = 'none';
+      document.getElementById('recapture').style.display = 'none';
+  });
+  </script>
 
 {% endblock %}

@@ -34,7 +34,7 @@ class MemberAddForm(ModelForm):
             "Registration_Date":TextInput(attrs={"class":"form-control","type":"date","max":date}),
             # "Address":TextInput(attrs={"class":"form-control",'style': 'height: 3em !importent;'}),
             # "Medical_History":TextInput(attrs={"class":"form-control"}),
-            "Photo":FileInput(attrs={"class":"form-control",'accept': 'image/*', 'capture':'camera'}),
+            "Photo":FileInput(attrs={"class":"form-control",'accept': 'image/*', 'capture':'camera', "id":"profilePic"}),
             "Id_Upload":FileInput(attrs={"class":"form-control",'accept': 'image/*', 'capture':'camera'}),
             "Access_Token_Id":TextInput(attrs={"class":"form-control"})
 

@@ -55,11 +55,11 @@
                 <h5 class="mb-0">$459/mo</h5>
               </div>
             </div> -->
-            
+
 
             <form action="{%url 'ProfilephotoUpdate' member.id %}" enctype="multipart/form-data" method="post">
               {% csrf_token %}
-              <input type="file"   name="photo" required class="text-black mt-3 d-block font-weight-medium h6">
+              <input type="file" name="photo" required class="text-black mt-3 d-block font-weight-medium h6">
               <button type="submit" class="btn btn-info">Upload New Photo</button>
             </form>
           </div>
@@ -75,19 +75,20 @@
               {% if member.Id_Upload == None or member.Id_upload == null %}
               <div class="survey-img mb-lg-3" src="" alt=""
                 style="width:60%;height:200px;display:block;margin:auto;object-fit:contain">No ID Available</div>
-                
-                {% else %}
 
-                  <img class="survey-img mb-lg-3" src="{{member.Id_Upload.url}}" alt=""
+              {% else %}
+
+              <img class="survey-img mb-lg-3" src="{{member.Id_Upload.url}}" alt=""
                 style="width:60%;height:200px;display:block;margin:auto;object-fit:contain" />
-                {% endif %}
+              {% endif %}
             </div>
             <div class="d-flex flex-wrap border-bottom py-2 justify-content-center text-center">
               <!-- <img class="survey-img mb-lg-3" src="assets/images/dashboard/img_1.jpg" alt="" /> -->
               <div class="pt-2">
                 <h5 class="mb-0"><span class="h6">Subscription Start Date</span> {{subscription.Subscribed_Date}}</h5>
                 <p class="mb-0 text-muted">.</p>
-                <h5 class="mb-0"><span class="h6">Subscription End Date: </span>{{subscription.Subscription_End_Date}}</h5>
+                <h5 class="mb-0"><span class="h6">Subscription End Date: </span>{{subscription.Subscription_End_Date}}
+                </h5>
               </div>
             </div>
             <!-- <div class="d-flex flex-wrap border-bottom py-2 justify-content-between">
@@ -286,7 +287,8 @@
                         <br><br>
                         <a href="{%url 'AddNewPaymentFromMember' member.id %}" class="btn btn-outline-info">Add
                           Payment</a>
-                        <a  data-bs-toggle="modal" data-bs-target="#staticBackdrop10" class="btn btn-info">View Payment History</a>
+                        <a data-bs-toggle="modal" data-bs-target="#staticBackdrop10" class="btn btn-info">View Payment
+                          History</a>
                         <!-- Subscription Chnage Model start  -->
 
                         <!-- Subscription Chnage Model end  -->
@@ -320,100 +322,143 @@
                           <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h4 class="modal-title fs-5" id="exampleModalToggleLabel">Payment History {{member}}</h4>
+                                <h4 class="modal-title fs-5" id="exampleModalToggleLabel">Payment History {{member}}
+                                </h4>
                                 <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                               </div>
 
                               <div class="modal-body">
 
                                 <div class="page-header flex-wrap">
-                                  <h3 class="mb-0"> All Payments <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block"></span>
+                                  <h3 class="mb-0"> All Payments <span
+                                      class="pl-0 h6 pl-sm-2 text-muted d-inline-block"></span>
                                   </h3>
-                                  <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
-              aria-label="Close"></button>
-                              </div>
-                      
-                              <div class="row">
+                                  <button type="button" class="btn btn-close mdi mdi-close text-xxl"
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+
+                                <div class="row">
                                   <div class="col-xl-12 col-sm-6 grid-margin stretch-card">
-                                      <div class="card">
-                                        <div class="card-body px-0 overflow-auto">
-                                          <h4 class="card-title pl-4">All Payments</h4>
-                                          <div class="table-responsive">
-                                            <table class="table">
-                                              <thead class="bg-light">
-                                                <tr>
-                                                
-                                                  <th>Payment Amount</th>
-                                                  <th>Mode Of Payment</th>
-                                                  <th>Date</th>
-                                                  <th>Status</th>
-                                                  <th>Action</th>
-                                                </tr>
-                                              </thead>
-                                              <tbody>
-                                                {% for i in payments %}
-                                                  
-                                                <tr>
-                                                  
-                                                  <td>
-                                                    AED {{i.Amount}}
-                                                    {% if i.Payment_Balance > 0 %}
-                                                    <br>
-                                                    <small class="text-danger">Payment Balance AED {{i.Payment_Balance}}</small> 
-                                                    {% endif %}
-                                                  </td>
-                                                  <td>{{i.Mode_of_Payment}}</td>
-                                                  <td>
+                                    <div class="card">
+                                      <div class="card-body px-0 overflow-auto">
+                                        <h4 class="card-title pl-4">All Payments</h4>
+                                        <div class="table-responsive">
+                                          <table class="table">
+                                            <thead class="bg-light">
+                                              <tr>
+
+                                                <th>Payment Amount</th>
+                                                <th>Mode Of Payment</th>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for i in payments %}
+
+                                              <tr>
+
+                                                <td>
+                                                  AED {{i.Amount}}
+                                                  {% if i.Payment_Balance > 0 %}
+                                                  <br>
+                                                  <small class="text-danger">Payment Balance AED
+                                                    {{i.Payment_Balance}}</small>
+                                                  {% endif %}
+                                                </td>
+                                                <td>{{i.Mode_of_Payment}}</td>
+                                                <td>
                                                   {{i.Payment_Date}}
-                                                  </td>
-                                                  <td>
-                                                    <div class="badge badge-inverse-success"> Completed </div>
-                                                  </td>
-                                                  <td>
-                                                    <a href="{%url 'ReceiptGenerate' i.id %}" target="_blank" class="btn btn-outline-warning">Get Receipt</a>
-                      
-                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdropsubperitype" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="delete" class="btn btn-outline-danger btn-sm"><i class="mdi mdi-delete"
+                                                </td>
+                                                <td>
+                                                  {% if i.Payment_Balance > 0 %}
+                                                  <a data-bs-toggle="modal" data-bs-target="#AddBalancePayment{{i.id}}"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    class="btn btn-outline-info">Make Balance Payment</a>
+                                                  {% else %}
+                                                  <div class="badge badge-inverse-success"> Completed </div>
+                                                  {% if i.balance_payment.exists %}
+                                                  <a href="{%url 'get_balance_receipt' i.balance_payment.all.0.id %}"
+                                                    class="badge badge-info">Balance Payment Made Get receipt</a>
+                                                  {% endif %}
+                                                  {% endif %}
+                                                </td>
+                                                <td>
+                                                  <a href="{%url 'ReceiptGenerate' i.id %}" target="_blank"
+                                                    class="btn btn-outline-warning">Get Receipt</a>
+
+                                                  <a data-bs-toggle="modal" data-bs-target="#staticBackdropsubperitype"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="delete"
+                                                    class="btn btn-outline-danger btn-sm"><i class="mdi mdi-delete"
                                                       style="font-size: 15px;"></i></a>
-                                                      {% if request.user.groups.all.0.name == "admin" %}
-                                                      <a href="{%url 'EditPayment' i.id %}" class="btn btn-inverse-info btn-icon"
-                                                                      data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i
-                                                                          style="font-size: x-large;" class="bi bi-pencil-square"></i></a>
-                                                                        {% endif %}
-                                                  </td>
-                                                </tr>
-                                                    <!-- Modal Sub Period delete -->
-                                                    <div class="modal fade" id="staticBackdropsubperitype" data-bs-backdrop="static"
-                                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                              
-                                                            <div class="modal-body">
-                                                                Do you Want To delete payment ?
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">No</button>
-                                                                <a href="{%url 'DeletePayment' i.id %}" type="button"
-                                                                    class="btn btn-danger">Yes</a>
-                                                            </div>
-                                                        </div>
+                                                  {% if request.user.groups.all.0.name == "admin" %}
+                                                  <a href="{%url 'EditPayment' i.id %}"
+                                                    class="btn btn-inverse-info btn-icon" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Edit"><i style="font-size: x-large;"
+                                                      class="bi bi-pencil-square"></i></a>
+                                                  {% endif %}
+                                                </td>
+                                              </tr>
+                                              <!-- Modal Sub Period delete -->
+                                              <div class="modal fade" id="staticBackdropsubperitype"
+                                                data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                  <div class="modal-content">
+
+                                                    <div class="modal-body">
+                                                      Do you Want To delete payment ?
                                                     </div>
+                                                    <div class="modal-footer">
+                                                      <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">No</button>
+                                                      <a href="{%url 'DeletePayment' i.id %}" type="button"
+                                                        class="btn btn-danger">Yes</a>
+                                                    </div>
+                                                  </div>
                                                 </div>
-                                                {% endfor %}
-                      
-                                              </tbody>
-                                            </table>
-                                          </div>
-                                          <!-- <a class="text-black mt-3 d-block pl-4" href="#">
+                                              </div>
+
+                                              <!-- <div class="modal fade" id="AddBalancePayment{{i.id}}" data-bs-backdrop="static"
+                                              data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                              <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5 class="modal-title" id="staticBackdropLabel">Balance Payment</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                    <form action="{%url 'make_balance_payment' i.id %}" method="post">
+                                                      {% csrf_token %}
+                                                      <h3>Balance Payment: <span class="text-danger">{{i.Payment_Balance}}</span></h3>
+                                                      <input type="text" name="balance" disabled class="form-control" placeholder="Enter Amount" value="{{i.Payment_Balance}}">
+                                                      <br>
+                                                      <button type="submit" class="btn btn-primary">Add Payment</button>
+                                                    </form>
+                                                    
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                                   
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div> -->
+                          
+                                              {% endfor %}
+
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                        <!-- <a class="text-black mt-3 d-block pl-4" href="#">
                                             <span class="font-weight-medium h6">View all Payments</span>
                                             <i class="mdi mdi-chevron-right"></i></a> -->
-                                        </div>
                                       </div>
                                     </div>
-                                </div> 
-                                
+                                  </div>
+                                </div>
+
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -448,6 +493,6 @@
       </footer>
     </div>
 
-   
-  
+
+
     {% endblock %}
