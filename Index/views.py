@@ -27,6 +27,7 @@ from django.db.models import Sum
 def Home(request):
     # Get the first 8 subscribers in reverse order directly
     subscribers = Subscription.objects.order_by('-id')[:8]
+    subscribers_pending = Subscription.objects.filter(Payment_Status = False).order_by('-id')
     members = MemberData.objects.all()
     month = datetime.now().strftime('%B')
     
@@ -67,6 +68,7 @@ def Home(request):
 
     context = {
         "subscribers": subscribers,
+        "subscribers_pending":subscribers_pending,
         "membercount": members.count(),
         "feepending": Subscription.objects.filter(Payment_Status=False).count(),
         "month": month,

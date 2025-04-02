@@ -72,14 +72,15 @@
             <div class="card-title font-weight-medium"> {{member.First_Name}} {{member.Last_Name}}'s ID CARD </div>
             <p class="text-muted"> Member Since: <span class="badge badge-info">{{member.Registration_Date}}</span> </p>
             <div class="d-flex flex-wrap border-bottom py-2 border-top justify-content-between">
-              {% if member.Id_Upload == None or member.Id_upload == null %}
-              <div class="survey-img mb-lg-3" src="" alt=""
-                style="width:60%;height:200px;display:block;margin:auto;object-fit:contain">No ID Available</div>
-
-              {% else %}
-
+              {% if member.Id_Upload %}
               <img class="survey-img mb-lg-3" src="{{member.Id_Upload.url}}" alt=""
                 style="width:60%;height:200px;display:block;margin:auto;object-fit:contain" />
+             
+
+              {% else %}
+              <div class="survey-img mb-lg-3" src="" alt=""
+              style="width:60%;height:200px;display:block;margin:auto;object-fit:contain">No ID Available</div>
+              
               {% endif %}
             </div>
             <div class="d-flex flex-wrap border-bottom py-2 justify-content-center text-center">

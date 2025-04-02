@@ -35,7 +35,7 @@ class MemberData(models.Model):
     Mobile_Number = models.CharField(max_length=255)
     Discount = models.FloatField(null=True, blank= True)
     Special_Discount = models.BooleanField(default = False)
-    Email = models.EmailField()
+    Email = models.EmailField(null=True, blank=True)
     Address = models.TextField(max_length=200)
     Medical_History = models.TextField(max_length=2000,null=True,blank=True)
     Registration_Date = models.DateField(auto_now_add=False)

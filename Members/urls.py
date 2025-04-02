@@ -4,6 +4,7 @@ from .import views
 urlpatterns = [
     path("Member",views.Member,name="Member"),
     path("Payments",views.Payments,name="Payments"),
+    path('search_members/', views.search_members, name='search_members'),
     path("MembersSingleView/<int:pk>",views.MembersSingleView,name="MembersSingleView"),
     path("MemberAccess",views.MemberAccess,name="MemberAccess"),
     path("DeletePayment/<int:pk>",views.DeletePayment,name="DeletePayment"),

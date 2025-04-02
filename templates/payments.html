@@ -3,6 +3,10 @@
 
 {% block content %}
 <style>
+  .dropdown-item.active {
+  background-color: #007bff;
+  color: white;
+}
   .list-card {
     position: relative;
     /* display: inline-block; */
@@ -46,8 +50,8 @@
       </h3>
       <div class="d-flex">
         <a href="{%url 'AllPayments' %}" type="button" class="btn btn-sm bg-white btn-icon-text border">
-                    <i class="mdi mdi-cash-multiple"></i> Go to All Payments </a>
-                  <!-- <button type="button" class="btn btn-sm bg-white btn-icon-text border ml-3">
+          <i class="mdi mdi-cash-multiple"></i> Go to All Payments </a>
+        <!-- <button type="button" class="btn btn-sm bg-white btn-icon-text border ml-3">
                     <i class="mdi mdi-printer btn-icon-prepend"></i> Print </button> -->
         <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
           class="btn btn-sm ml-3 btn-success"> <i class="mdi mdi-plus text-lg"></i> Add Payment </button>
@@ -73,13 +77,13 @@
                 </thead>
                 <tbody>
                   {% for i in pay %}
-                  
+
 
                   <tr>
                     <td>
                       <div class="d-flex align-items-center">
                         <img src="{{i.Member.Photo.url}}" alt="image" id="photoclient" />
-                         <b>{{forloop.counter}}.  </b>
+                        <b>{{forloop.counter}}. </b>
                         <div class="table-user-name ml-3">
                           <p class="mb-0 font-weight-medium"> {{i.Member}} </p>
                           {% if i.Payment_Balance > 0 %}
@@ -88,7 +92,7 @@
 
                           {% else %}
                           <small> Payment done</small>
-                      {% endif %}
+                          {% endif %}
 
                         </div>
                       </div>
@@ -97,9 +101,9 @@
                       AED {{i.Amount}}
                       {% if i.Payment_Balance > 0 %}
                       <br>
-                      <small class="text-danger">Payment Balance AED {{i.Payment_Balance}}</small> 
+                      <small class="text-danger">Payment Balance AED {{i.Payment_Balance}}</small>
                       {% endif %}
-                     
+
                     </td>
                     <td>{{i.Mode_of_Payment}}</td>
                     <td>
@@ -114,11 +118,11 @@
                       <a data-bs-toggle="modal" data-bs-toggle="tooltip" data-bs-placement="top" title="delete"
                         data-bs-target="#staticBackdropsubperitype" class="btn btn-outline-danger btn-sm"><i
                           class="mdi mdi-delete" style="font-size: 15px;"></i></a>
-                          {% if request.user.groups.all.0.name == "admin" %}
-                      <a href="{%url 'EditPayment' i.id %}" class="btn btn-inverse-info btn-icon" data-bs-toggle="tooltip"
-                        data-bs-placement="top" title="Edit"><i style="font-size: x-large;"
+                      {% if request.user.groups.all.0.name == "admin" %}
+                      <a href="{%url 'EditPayment' i.id %}" class="btn btn-inverse-info btn-icon"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i style="font-size: x-large;"
                           class="bi bi-pencil-square"></i></a>
-                          {% endif %}
+                      {% endif %}
                     </td>
                   </tr>
                   <!-- Modal Sub Period delete -->
@@ -162,7 +166,7 @@
                   <div class="row align-items-center">
                     <div class="col-sm-4">
                       <!-- <img src="{{i.Member.Photo.url}}" alt="" /> -->
-                       <b>{{forloop.counter}}. </b>
+                      <b>{{forloop.counter}}. </b>
                     </div>
                     <div class="col-sm-8 pr-0 pl-sm-0">
                       <span>Date: {{i.Payment_Date}}</span>
@@ -439,7 +443,8 @@
               <div class="card">
                 <div class="card-body">
                   <!-- <h4 class="card-title">Horizontal Two column</h4> -->
-                  <form class="form-sample memberadd-form" method="post" action="{%url 'AddNewPayment' %}" enctype="multipart/form-data">
+                  <form class="form-sample memberadd-form" method="post" action="{%url 'AddNewPayment' %}"
+                    enctype="multipart/form-data">
                     {% csrf_token %}
                     <p class="card-description">Add Payment</p>
                     <!-- <div class="row">
@@ -457,22 +462,20 @@
                     </div> -->
 
                     <div class="row">
-                      
+
                       <div class="col-md-12">
                         <div class="form-group row">
                           <label class="col-sm-3 col-form-label">Please Select Member to Add Payment:</label>
-                          <div class="col-sm-12">
-                            <select name="member" required class="form-control" id="">
-                              <option value=""  disabled selected>--------------------</option>
 
-                              {% for i in member%}
-                              <option value="{{i.id}}"  >{{i}}</option>
-                              {% endfor %}
-                          </select>
+                          <div class="col-sm-12">
+                            <input type="text" id="memberSearch" class="form-control" autocomplete="off" placeholder="Search member...">
+                            <input type="hidden" name="member" id="selectedMemberId" required >
+                            <div id="memberResults" class="dropdown-menu w-100" style="display: none;"></div>
                           </div>
+
                         </div>
                       </div>
-                      
+
 
                     </div>
                     <!-- <div class="row">
@@ -510,5 +513,143 @@
 </div>
 <!-- </div> -->
 <!-- </div> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  const memberSearch = document.getElementById('memberSearch');
+  const memberResults = document.getElementById('memberResults');
+  const selectedMemberId = document.getElementById('selectedMemberId');
+  
+  let currentFocus = -1;
+  
+  // Search functionality with AJAX
+  let searchTimeout;
+  memberSearch.addEventListener('input', function() {
+    const searchTerm = this.value;
+    
+    // Clear previous timeout and reset focus
+    clearTimeout(searchTimeout);
+    currentFocus = -1;
+    
+    if (searchTerm.length < 2) {
+      memberResults.style.display = 'none';
+      return;
+    }
+    
+    // Set a small delay to prevent too many requests
+    searchTimeout = setTimeout(() => {
+      fetch(`/members/search_members/?term=${encodeURIComponent(searchTerm)}`)
+        .then(response => response.json())
+        .then(data => {
+          displayResults(data);
+        })
+        .catch(error => console.error('Error:', error));
+    }, 300);
+  });
+  
+  // Display filtered results
+  function displayResults(results) {
+    memberResults.innerHTML = '';
+    
+    if (results.length === 0) {
+      memberResults.innerHTML = '<div class="dropdown-item">No members found</div>';
+      memberResults.style.display = 'block';
+      return;
+    }
+    
+    results.forEach(member => {
+      const item = document.createElement('a');
+      item.className = 'dropdown-item';
+      item.href = '#';
+      item.textContent = member.name;
+      item.dataset.id = member.id;
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        selectItem(this);
+      });
+      
+      memberResults.appendChild(item);
+    });
+    
+    memberResults.style.display = 'block';
+  }
+  
+  // Function to select an item from dropdown
+  function selectItem(item) {
+    memberSearch.value = item.textContent;
+    selectedMemberId.value = item.dataset.id;
+    memberResults.style.display = 'none';
+    memberSearch.focus();
+  }
+  
+  // Add keyboard navigation
+  memberSearch.addEventListener('keydown', function(e) {
+    const items = memberResults.getElementsByClassName('dropdown-item');
+    
+    if (!items.length) return;
+    
+    // Down arrow
+    if (e.keyCode === 40) {
+      currentFocus++;
+      addActive(items);
+      e.preventDefault(); // Prevent cursor from moving to end of input
+    } 
+    // Up arrow
+    else if (e.keyCode === 38) {
+      currentFocus--;
+      addActive(items);
+      e.preventDefault(); // Prevent cursor from moving to start of input
+    } 
+    // Enter key
+    else if (e.keyCode === 13) {
+      e.preventDefault();
+      if (currentFocus > -1) {
+        if (items[currentFocus]) {
+          selectItem(items[currentFocus]);
+        }
+      }
+    }
+  });
+  
+  // Function to add active class to item
+  function addActive(items) {
+    if (!items) return false;
+    
+    // Remove active from all items
+    removeActive(items);
+    
+    // Adjust the focus if needed
+    if (currentFocus >= items.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (items.length - 1);
+    
+    // Add active class
+    items[currentFocus].classList.add('active');
+    
+    // Scroll into view if needed
+    items[currentFocus].scrollIntoView({block: 'nearest'});
+  }
+  
+  // Function to remove active class from items
+  function removeActive(items) {
+    for (let i = 0; i < items.length; i++) {
+      items[i].classList.remove('active');
+    }
+  }
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (e.target !== memberSearch && e.target !== memberResults) {
+      memberResults.style.display = 'none';
+    }
+  });
+  
+  // Show dropdown when focusing on search input
+  memberSearch.addEventListener('focus', function() {
+    if (this.value.length >= 2) {
+      memberResults.style.display = 'block';
+    }
+  });
+});
+</script>
 
 {% endblock %}

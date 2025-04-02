@@ -425,19 +425,52 @@ def Payments(request):
     }
     return render(request, "payments.html",context)
 
+
+# Add this view to your views.py
+from django.http import JsonResponse
+from django.db.models import Q
+
+def search_members(request):
+    search_term = request.GET.get('term', '')
+    
+    if len(search_term) < 2:
+        return JsonResponse([], safe=False)
+    
+    members = MemberData.objects.filter(
+        Q(First_Name__icontains=search_term) | 
+        Q(Last_Name__icontains=search_term)
+    )
+    
+    results = []
+    for member in members:
+        results.append({
+            'id': member.id,
+            'name': f"{member.First_Name} {member.Last_Name}"
+        })
+    
+    return JsonResponse(results, safe=False)
+
 @login_required(login_url='SignIn')
 def AddNewPayment(request):
     if request.method == "POST":
-        mid = request.POST["member"]
-        member = MemberData.objects.get(id = mid)
-        Sub = Subscription.objects.get(Member = member)
+        try:
+            mid = request.POST["member"]
+            member = MemberData.objects.get(id = mid)
+            Sub = Subscription.objects.get(Member = member)
 
-        context = {
-            "member":member,
-            "sub":Sub,
-            "discounted":Sub.Amount - (Sub.Amount*member.Discount)/100
-        }
-        return render(request,"paymentscreen.html",context)
+            context = {
+                "member":member,
+                "sub":Sub,
+                "discounted":Sub.Amount - (Sub.Amount*member.Discount)/100
+            }
+            return render(request,"paymentscreen.html",context)
+        except:
+            messages.error(request, "Member is not exists")
+            return redirect("Payments")
+    else:
+        messages.info(request, "Please select member to continue...")
+        return redirect("Payments")
+
     
 @login_required(login_url='SignIn')
 def AddNewPaymentFromMember(request,pk):

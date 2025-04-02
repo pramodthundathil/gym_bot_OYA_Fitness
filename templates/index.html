@@ -22,8 +22,10 @@
     crossorigin="anonymous"></script>
     <style>
       #photoclient:hover{
-        transform: scale(3);
+        transform: scale(8);
         transition: transform 0.5s;
+        z-index: 1055;
+        position: absolute;
 
 
       } 
@@ -293,7 +295,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="row">
-                <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                <div class="col-xl-4 col-lg-12 stretch-card grid-margin">
                   <div class="card bg-info">
                     <div class="card-body px-3 py-4">
                       <div class="d-flex justify-content-between align-items-start">
@@ -309,7 +311,7 @@
                   </div>
                 </div>
 
-                <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                <div class="col-xl-4 col-lg-12 stretch-card grid-margin">
                   <div class="card bg-danger">
                     <div class="card-body px-3 py-4">
                       <div class="d-flex justify-content-between align-items-start">
@@ -326,7 +328,7 @@
                 </div>
 
 
-                <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                <div class="col-xl-4 col-lg-12 stretch-card grid-margin">
                   <div class="card bg-info">
                     <div class="card-body px-3 py-4">
                       <div class="d-flex justify-content-between align-items-start">
@@ -340,30 +342,30 @@
                     </div>
                   </div>
                 </div>
-                <!-- Your existing total members card -->
-<!-- <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
-  <div class="card bg-info">
-      <div class="card-body px-3 py-4">
-          <div class="d-flex justify-content-between align-items-start">
-              <div class="color-card">
-                  <p class="mb-0 color-card-head">Total Members</p>
-                  <h2 class="text-white">{{membercount}}</h2>
-              </div>
-              <i class="card-icon-indicator mdi mdi-account-circle bg-inverse-icon-success"></i>
-          </div>
-          <h6 class="text-white">Month of {{month}}</h6>
-      </div>
-  </div>
-</div> -->
+                                <!-- Your existing total members card -->
+                <!-- <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                  <div class="card bg-info">
+                      <div class="card-body px-3 py-4">
+                          <div class="d-flex justify-content-between align-items-start">
+                              <div class="color-card">
+                                  <p class="mb-0 color-card-head">Total Members</p>
+                                  <h2 class="text-white">{{membercount}}</h2>
+                              </div>
+                              <i class="card-icon-indicator mdi mdi-account-circle bg-inverse-icon-success"></i>
+                          </div>
+                          <h6 class="text-white">Month of {{month}}</h6>
+                      </div>
+                  </div>
+                </div> -->
 
 
 
 
               </div>
             </div>
-            <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+            <div class="col-md-12">
               <div class="row">
-                <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
+                <div class="col-xl-6 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
                   <div class="card bg-warning">
                     <div class="card-body px-3 py-4">
                       <div class="d-flex justify-content-between align-items-start">
@@ -379,7 +381,7 @@
                   </div>
                 </div>
 
-                <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0 pb-xl-3 mt-3">
+                <div class="col-xl-6 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
                   <div class="card bg-primary">
                     <div class="card-body px-3 py-4">
                       <div class="d-flex justify-content-between align-items-start">
@@ -394,10 +396,9 @@
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
-            <div class="col-xl-9 col-sm-6 grid-margin stretch-card">
+            <div class="col-xl-6 col-sm-6 grid-margin stretch-card">
               <div class="card" style="max-height: 700px;">
                 <div class="card-body px-0 overflow-auto">
                   <h4 class="card-title pl-4">Members</h4>
@@ -441,6 +442,72 @@
                           <td>
                             {{sub.Subscription_End_Date}}
                           </td>
+                          <td>
+                            {% if sub.Payment_Status == False %}
+                            <div class="badge badge-inverse-danger"> Inactive </div>
+                            {% else %}
+                            <div class="badge badge-inverse-success"> Active </div>
+                            {% endif %}
+                          </td>
+                          <td>
+                            <a href="{%url 'MembersSingleView' sub.Member.id %}" class="btn btn-outline-info">View</a>
+                          </td>
+                        </tr>
+                        {% endfor %}
+
+                      </tbody>
+                    </table>
+                  </div>
+                  <a class="text-black mt-3 d-block pl-4" href="{%url 'AllMembers' %}">
+                    <span class="font-weight-medium h6">View all Members</span>
+                    <i class="mdi mdi-chevron-right"></i></a>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-6 col-sm-6 grid-margin stretch-card">
+              <div class="card" style="max-height: 700px;">
+                <div class="card-body px-0 overflow-auto">
+                  <h4 class="card-title pl-4">Fee Pending Members</h4>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead class="bg-light">
+                        <tr>
+                          <th>Member</th>
+                          <!-- <th>Subscrption Type</th>
+                          <th>Subscrption End Date</th> -->
+                          <th>Status</th>
+                          <th>View</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for sub in subscribers_pending %}
+                        <tr>
+                          <td>
+                            <div class="d-flex align-items-center">
+                              <img src="{{sub.Member.Photo.url}}" alt="image" id="photoclient"/>
+                              <div class="table-user-name ml-3">
+                                <p class="mb-0 font-weight-medium"> {{sub.Member.First_Name}} {{sub.Member.Last_Name}}
+                                </p>
+                                {% if sub.Payment_Status == False %}
+                                <small class="text-danger"> Payment Not Completed</small>
+                                {% else %}
+                                  
+                                  {% if sub.Subscription_payment.all.last.Payment_Balance > 0 %}
+                                  <small class="text-warning"> Payment Partially Done</small>
+
+
+                                  {% else %}
+                                  <small> Payment done</small>
+                                  {% endif %}
+
+                                {% endif %}
+                              </div>
+                            </div>
+                          </td>
+                          <!-- <td>{{sub.Type_Of_Subscription}}</td>
+                          <td>
+                            {{sub.Subscription_End_Date}}
+                          </td> -->
                           <td>
                             {% if sub.Payment_Status == False %}
                             <div class="badge badge-inverse-danger"> Inactive </div>
