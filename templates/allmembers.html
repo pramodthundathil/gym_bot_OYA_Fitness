@@ -46,7 +46,7 @@
                               <img src="{{sub.Photo.url}}" alt="image"  id="photoclient"/>
                               <div class="table-user-name ml-3">
                                 <p class="mb-0 font-weight-medium"> {{sub.First_Name}} {{sub.Last_Name}} </p>
-                                {% if sub.Payment_Status == False %}
+                                {% if sub.Active_status == False %}
                                 <small class="text-danger"> Payment Not Completed</small>
                                 {% else %}
                                 <small> Payment Done</small>
