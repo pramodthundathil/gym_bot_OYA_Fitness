@@ -40,49 +40,49 @@ def ScheduledTask():
             "Admin_Password": ""
         }
 
-    # Get JWT token on local host Ztehodevice
-    url = f'http://http://127.0.0.1:80/jwt-api-token-auth/'
-    print(url)
-    header1 = {
-        'Content-Type': 'application/json'
-    }
-    token = "nil"
-    body = {
-        "username": confdata.Admin_Username,
-        "password": confdata.Admin_Password
-    }
-    json_payload = json.dumps(body)
+    # # Get JWT token on local host Ztehodevice
+    # url = f'http://http://127.0.0.1:80/jwt-api-token-auth/'
+    # print(url)
+    # header1 = {
+    #     'Content-Type': 'application/json'
+    # }
+    # token = "nil"
+    # body = {
+    #     "username": confdata.Admin_Username,
+    #     "password": confdata.Admin_Password
+    # }
+    # json_payload = json.dumps(body)
 
-    try:
-        response = requests.post(url, headers=header1, data=json_payload)
-        if response.status_code == 200:
-            print('Request successful!')
-            token_dict = response.json()
-            token = token_dict['token']
-            print(token_dict)
-        else:
-            print("No connection")
-    except requests.RequestException:
-        print("No connection........")
+    # try:
+    #     response = requests.post(url, headers=header1, data=json_payload)
+    #     if response.status_code == 200:
+    #         print('Request successful!')
+    #         token_dict = response.json()
+    #         token = token_dict['token']
+    #         print(token_dict)
+    #     else:
+    #         print("No connection")
+    # except requests.RequestException:
+    #     print("No connection........")
     
-    urlforapi = 'http://http://127.0.0.1:80/api-token-auth/'
-    header2 = {
-        'Content-Type': 'application/json',
-        'Authorization': f'{token}'
-    }
-    try:
-        tokenresponse = requests.post(urlforapi, headers=header2,data=json_payload)
-        if tokenresponse.status_code == 200:
-            token_val = tokenresponse.json()
-            mytoken = token_val['token']
-    except:
-        print("No connection...")
-        mytoken = 0
+    # urlforapi = 'http://http://127.0.0.1:80/api-token-auth/'
+    # header2 = {
+    #     'Content-Type': 'application/json',
+    #     'Authorization': f'{token}'
+    # }
+    # try:
+    #     tokenresponse = requests.post(urlforapi, headers=header2,data=json_payload)
+    #     if tokenresponse.status_code == 200:
+    #         token_val = tokenresponse.json()
+    #         mytoken = token_val['token']
+    # except:
+    #     print("No connection...")
+    #     mytoken = 0
 
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Token {mytoken}'
-    }
+    # headers = {
+    #     'Content-Type': 'application/json',
+    #     'Authorization': f'Token {mytoken}'
+    # }
 
     end_date = datetime.now()  # Assuming end_date is current datetime, adjust as necessary
     resign_date = datetime.now()  # Assuming resign_date is current datetime, adjust as necessary
@@ -105,39 +105,39 @@ def ScheduledTask():
     Subscription.objects.bulk_update(subscriptions_to_update, ['Payment_Status'])
     AccessToGate.objects.bulk_update(access_to_update, ['Status'])
 
-    acc = AccessToGate.objects.all()
+    # acc = AccessToGate.objects.all()
 
-    with requests.Session() as session:
-        for access in acc:
-            accessid = access.Member.Access_Token_Id
-            if access.Status is False:
-                url = f"http://127.0.0.1:80/personnel/api/resigns/"
-                data = {
-                    "employee": accessid,
-                    "disableatt": True,
-                    "resign_type": 1,
-                    "resign_date": str(resign_date),
-                    "reason": "Payment Pending",
-                }
-            else:
-                url = f"http://127.0.0.1:80/personnel/api/reinstatement/"
-                data = {
-                    "resigns": [accessid]
-                }
+    # with requests.Session() as session:
+    #     for access in acc:
+    #         accessid = access.Member.Access_Token_Id
+    #         if access.Status is False:
+    #             url = f"http://127.0.0.1:80/personnel/api/resigns/"
+    #             data = {
+    #                 "employee": accessid,
+    #                 "disableatt": True,
+    #                 "resign_type": 1,
+    #                 "resign_date": str(resign_date),
+    #                 "reason": "Payment Pending",
+    #             }
+    #         else:
+    #             url = f"http://127.0.0.1:80/personnel/api/reinstatement/"
+    #             data = {
+    #                 "resigns": [accessid]
+    #             }
 
-            json_payload = json.dumps(data)
+    #         json_payload = json.dumps(data)
 
-            try:
-                response = session.patch(url, headers=headers, data=json_payload)
-                if response.status_code == 200:
-                    print("Succeed...")
-                else:
-                    print("Failed.....")
-            except requests.RequestException:
-                print("No connection from resigns")
-                break
+    #         try:
+    #             response = session.patch(url, headers=headers, data=json_payload)
+    #             if response.status_code == 200:
+    #                 print("Succeed...")
+    #             else:
+    #                 print("Failed.....")
+    #         except requests.RequestException:
+    #             print("No connection from resigns")
+    #             break
 
-    print("workinggggg.....")
+    # print("workinggggg.....")
 
             
 
@@ -335,11 +335,16 @@ def ChangeSubscription(request,pk):
             sub_data.Member = member
             start_dat = sub_data.Subscribed_Date
             if sub_data.Period_Of_Subscription.Category == "Month":
-                # days = sub_data.Period_Of_Subscription
-                sub_data.Subscription_End_Date = start_dat +timedelta(days = (sub_data.Period_Of_Subscription.Period * 30))
+                sub_data.Subscription_End_Date = start_dat + timedelta(days=(sub_data.Period_Of_Subscription.Period * 30))
             elif sub_data.Period_Of_Subscription.Category == "Year":
-                # days = sub_data.Period_Of_Subscription
-                sub_data.Subscription_End_Date = start_dat +timedelta(days = (sub_data.Period_Of_Subscription.Period * 365))
+                sub_data.Subscription_End_Date = start_dat + timedelta(days=(sub_data.Period_Of_Subscription.Period * 365))
+            elif sub_data.Period_Of_Subscription.Category == "Week":
+                sub_data.Subscription_End_Date = start_dat + timedelta(days=(sub_data.Period_Of_Subscription.Period * 7))
+            elif sub_data.Period_Of_Subscription.Category == "Day":
+                sub_data.Subscription_End_Date = start_dat + timedelta(days=sub_data.Period_Of_Subscription.Period)
+            else:
+                # Default fallback - set to 30 days if category is unknown
+                sub_data.Subscription_End_Date = start_dat + timedelta(days=30)
             sub_data.save()
 
 
