@@ -40,6 +40,42 @@ class MemberAddForm(ModelForm):
 
         }
 
+
+class MemberAddQuickForm(ModelForm):
+    class Meta:
+        model = MemberData
+        fields = [
+            "First_Name",
+            "Gender",
+            "Mobile_Number",    
+            "Photo",
+            'Height',
+            'Weight',
+            "Medical_History",
+        ]
+        labels = {
+            "First_Name": "Full Name",
+        }
+
+        widgets = {
+            "First_Name":TextInput(attrs={"class":"form-control"}),
+            # "Last_Name":TextInput(attrs={"class":"form-control"}),
+            "Weight":TextInput(attrs={"class":"form-control"}),
+            "Gender":Select(attrs={"class":"form-control"}),
+            # "Date_Of_Birth":TextInput(attrs={"class":"form-control","type":"date","min":date}),
+            "Mobile_Number":TextInput(attrs={"class":"form-control","type":"number"}),
+            "Height":TextInput(attrs={"class":"form-control"}),
+            # "Registration_Date":TextInput(attrs={"class":"form-control","type":"date","max":date}),
+            # "Address":TextInput(attrs={"class":"form-control",'style': 'height: 3em !importent;'}),
+            # "Medical_History":TextInput(attrs={"class":"form-control"}),
+            "Photo":FileInput(attrs={"class":"form-control",'accept': 'image/*', 'capture':'camera', "id":"profilePic"}),
+            # "Id_Upload":FileInput(attrs={"class":"form-control",'accept': 'image/*', 'capture':'camera'}),
+            # "Access_Token_Id":TextInput(attrs={"class":"form-control"})
+
+        }
+
+
+
 class SubscriptionAddForm(ModelForm):
     class Meta:
         model = Subscription

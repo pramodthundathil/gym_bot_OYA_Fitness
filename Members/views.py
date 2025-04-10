@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import MemberAddForm, SubscriptionAddForm, PaymentForm
+from .forms import MemberAddForm, SubscriptionAddForm, PaymentForm, MemberAddQuickForm
 from .models import MemberData, Subscription, Payment, AccessToGate, Discounts
 from django.contrib import messages
 from datetime import datetime, timedelta
@@ -149,16 +149,17 @@ def ScheduledTask():
 
 from Finance.models import Income, Expence
 
+
 @login_required(login_url='SignIn')
 def Member(request):
-    form = MemberAddForm()
+    form = MemberAddQuickForm()
     sub_form = SubscriptionAddForm()
     Trainee = MemberData.objects.all()[:8][::-1]
     subscribers = Subscription.objects.all()[:8][::-1]
     notification_payments = Payment.objects.filter(Payment_Date__gte = start_date, Payment_Date__lte = today)
 
     if request.method == "POST":
-        form = MemberAddForm(request.POST, request.FILES)
+        form = MemberAddQuickForm(request.POST, request.FILES)
         sub_form = SubscriptionAddForm(request.POST)
         if form.is_valid() and sub_form.is_valid():
             member = form.save()
