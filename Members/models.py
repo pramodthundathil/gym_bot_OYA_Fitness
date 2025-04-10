@@ -1,7 +1,7 @@
 from django.db import models
 
 
-# Setting classess 
+# Setting classes 
 
 class Batch_DB(models.Model):
     Batch_Name = models.CharField(max_length=255,choices=(("Morning","Morning"),("Evening","Evening"),("Stoped","Stoped")))

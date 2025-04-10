@@ -244,17 +244,21 @@ def UpdateMember(request,pk):
         lname = request.POST["lname"]
         email = request.POST["email"]
         phone = request.POST["phone"]
-        dob = request.POST["dob"]
+        # dob = request.POST.get("dob")
         address = request.POST["address"]
-        medicahistory = request.POST["mhistory"]
+        medical_history = request.POST["mhistory"]
+        height = request.POST["height"]
+        weight = request.POST["weight"]
 
         member.First_Name = fname
         member.Last_Name = lname
-        member.Date_Of_Birth = dob
+        # member.Date_Of_Birth = dob
         member.Mobile_Number = phone
         member.Email = email
         member.Address = address
-        member.Medical_History = medicahistory
+        member.Medical_History = medical_history
+        member.Height = height
+        member.Weight = weight
         member.save()
         messages.success(request,"User Data Updated..")
         return redirect("MembersSingleView",pk)

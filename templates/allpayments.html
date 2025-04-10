@@ -36,6 +36,7 @@
                     <th>Date</th>
                     <th>Status</th>
                     <th>Action</th>
+                    <th>View</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -94,6 +95,10 @@
                         data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i style="font-size: x-large;"
                           class="bi bi-pencil-square"></i></a>
                       {% endif %}
+                    </td>
+                    <td>
+                      <a href="{%url 'MembersSingleView' i.Member.id %}" class="btn btn-outline-info btn-sm">View
+                        Member</a>
                     </td>
                   </tr>
                   <!-- Modal partially paid -->
