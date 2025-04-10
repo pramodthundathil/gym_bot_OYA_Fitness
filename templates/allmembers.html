@@ -37,7 +37,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for sub in member  %}  
+                        {% for sub in members  %}  
                         <tr>
                           <th>{{forloop.counter}}</th>
                           <td>
@@ -46,13 +46,19 @@
                               <img src="{{sub.Photo.url}}" alt="image"  id="photoclient"/>
                               <div class="table-user-name ml-3">
                                 <p class="mb-0 font-weight-medium"> {{sub.First_Name}} {{sub.Last_Name}} </p>
-                                {% if sub.Active_status == False %}
-                                <small class="text-danger"> Payment Not Completed</small>
-                                {% else %}
-                                <small> Payment Done</small>
-      
-                                {% endif %}
-                              </div>
+                                
+                                {% with last_payment=sub.payment_set.last %}
+                                    {% if not last_payment or not last_payment.Payment_Status %}
+                                        <small class="text-danger">Payment Not Completed</small>
+                                    {% else %}
+                                        {% if last_payment.Payment_Balance > 0 %}
+                                            <small class="text-warning">Payment Partially Done</small>
+                                        {% else %}
+                                            <small class="text-success">Payment Done</small>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
                             </div>
                           </td>
                           <td>

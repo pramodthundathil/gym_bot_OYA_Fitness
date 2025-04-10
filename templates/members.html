@@ -85,11 +85,18 @@
                         <div class="table-user-name ml-3">
                           <p class="mb-0 font-weight-medium"> {{sub.Member.First_Name}} {{sub.Member.Last_Name}} </p>
                           {% if sub.Payment_Status == False %}
-                          <small class="text-danger"> Payment Not Completed</small>
-                          {% else %}
-                          <small> Payment Done</small>
+                                <small class="text-danger"> Payment Not Completed</small>
+                                {% else %}
+                                  
+                                  {% if sub.Subscription_payment.all.last.Payment_Balance > 0 %}
+                                  <small class="text-warning"> Payment Partially Done</small>
 
-                          {% endif %}
+
+                                  {% else %}
+                                  <small> Payment done</small>
+                                  {% endif %}
+
+                                {% endif %}
                         </div>
                       </div>
                     </td>
@@ -540,7 +547,7 @@
               <div class="card">
                 <div class="card-body">
                   <!-- <h4 class="card-title">Horizontal Two column</h4> -->
-                  <form class="form-sample memberadd-form" method="post" enctype="multipart/form-data">
+                  <form class="form-sample memberadd-form" method="post" id="memberaddForm" enctype="multipart/form-data">
                     {% csrf_token %}
                     <p class="card-description">Personal Info</p>
                     <div class="row">
@@ -590,7 +597,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" id="submitButton" onclick="disablebutton()" class="btn btn-primary">Submit</button>
           </div>
         </form>
 
@@ -663,6 +670,44 @@
       document.getElementById('capturedImage').style.display = 'none';
       document.getElementById('recapture').style.display = 'none';
   });
+
+
+  function disablebutton() {
+  const form = document.getElementById("memberaddForm");
+  const button = document.getElementById("submitButton");
+  let isValid = true;
+
+  // First validate the form
+  for (let i = 0; i < form.elements.length; i++) {
+    const field = form.elements[i];
+    if (field.required && !field.value.trim()) {
+      isValid = false;
+      field.style.border = "1px solid red"; // Highlight invalid fields
+    } else {
+      field.style.border = ""; // Reset valid fields
+    }
+  }
+
+  if (!isValid) {
+    alert("Please fill out all required fields.");
+    return false; // Prevent form submission
+  }
+
+  // If validation passes, then disable button and submit
+  button.disabled = true;
+  button.innerHTML = 'Submitting...';
+  button.style.backgroundColor = '#ccc';
+  
+  // Submit the form
+  form.submit();
+  
+  // Reset button after 5 seconds
+  setTimeout(function() {
+    button.disabled = false;
+    button.innerHTML = 'Submit';
+    button.style.backgroundColor = '';
+  }, 5000);
+}
   </script>
 
 {% endblock %}

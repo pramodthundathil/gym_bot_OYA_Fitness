@@ -36,40 +36,44 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for sub in member  %}  
+                        {% for sub in member %}  
                         <tr>
-                          <td>
-                            <div class="d-flex align-items-center">
-                              <img src="{{sub.Photo.url}}" alt="image" />
-                              <div class="table-user-name ml-3">
-                                <p class="mb-0 font-weight-medium"> {{sub.First_Name}} {{sub.Last_Name}} </p>
-                                {% if sub.Payment_Status == False %}
-                                <small class="text-danger"> Payment Not Completed</small>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{sub.Photo.url}}" alt="image" />
+                                    <div class="table-user-name ml-3">
+                                        <p class="mb-0 font-weight-medium"> {{sub.First_Name}} {{sub.Last_Name}} </p>
+                                        
+                                        {% with last_payment=sub.payment_set.last %}
+                                            {% if not last_payment or not last_payment.Payment_Status %}
+                                                <small class="text-danger">Payment Not Completed</small>
+                                            {% else %}
+                                                {% if last_payment.Payment_Balance > 0 %}
+                                                    <small class="text-warning">Payment Partially Done</small>
+                                                {% else %}
+                                                    <small class="text-success">Payment Done</small>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{sub.Registration_Date}}
+                            </td>
+                            <td>
+                                {% if sub.Active_status == False %}
+                                    <div class="badge badge-inverse-danger"> Inactive </div>
                                 {% else %}
-                                <small> Payment Done</small>
-      
+                                    <div class="badge badge-inverse-success"> Active </div>
                                 {% endif %}
-                              </div>
-                            </div>
-                          </td>
-                     
-                          <td>
-                            {{sub.Registration_Date}}
-                          </td>
-                          <td>
-                            {% if sub.Active_status == False %}
-                            <div class="badge badge-inverse-danger"> Inactive </div>
-                            {% else %}
-                            <div class="badge badge-inverse-success"> Active </div>
-                            {% endif %}
-                          </td>
-                          <td>
-                              <a href="{%url 'MembersSingleView' sub.id %}" class="btn btn-outline-info">View</a>
-                          </td>
+                            </td>
+                            <td>
+                                <a href="{%url 'MembersSingleView' sub.id %}" class="btn btn-outline-info">View</a>
+                            </td>
                         </tr>
                         {% endfor %}
-                        
-                      </tbody>
+                    </tbody>
                     </table>
                   </div>
                   <a class="text-black mt-3 d-block pl-4" href="#">

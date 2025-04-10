@@ -886,8 +886,19 @@ def BlockAccess(request,pk):
 
 @login_required(login_url='SignIn')
 def AllMembers(request):
-    members = MemberData.objects.all()[::-1]
-    return render(request, "allmembers.html",{"member":members})
+    members = list(MemberData.objects.all().order_by('-id'))
+    
+        
+        # For each member, get the last payment and add it as an attribute
+    for member in members:
+        last_payment = Payment.objects.filter(Member=member).order_by('-Payment_Date').first()
+        member.last_payment = last_payment
+    
+    context = {
+        "members": members
+    }
+    
+    return render(request, "allmembers.html", context)
 
 @login_required(login_url='SignIn')
 def AllPayments(request):

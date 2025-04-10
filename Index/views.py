@@ -262,15 +262,23 @@ def SignOut(request):
 def Search(request):
     if request.method == "POST":
         key = request.POST["key"]
-        members1 = MemberData.objects.filter(First_Name__contains = key)
-        members2 = MemberData.objects.filter(Last_Name__contains= key)
-        list(members1).extend(list(members2))
-        member = list(set(members1))
-        print(member)
+        # Get members matching first or last name
+        members1 = MemberData.objects.filter(First_Name__contains=key)
+        members2 = MemberData.objects.filter(Last_Name__contains=key)
+        
+        # Combine using Python sets to remove duplicates
+        members_set = set(list(members1) + list(members2))
+        members = list(members_set)
+        
+        # For each member, get the last payment and add it as an attribute
+        for member in members:
+            last_payment = Payment.objects.filter(Member=member).order_by('-Payment_Date').first()
+            member.last_payment = last_payment
+        
         context = {
-            "member":member
+            "member": members
         }
-        return render(request, "search.html",context)
+        return render(request, "search.html", context)
     return render(request, "search.html")
 
 def ViewAllActivities(request):
