@@ -914,7 +914,7 @@ def AllPayments(request):
 
 @login_required(login_url='SignIn')
 def FeePendingMembers(request):
-    subscribers = Subscription.objects.all()
+    subscribers = Subscription.objects.filter(Payment_Status = False)
 
     return render(request,"feependingmembers.html",{"subscribers":subscribers})
 # Reports generation

@@ -38,9 +38,9 @@
                         </thead>
                         <tbody>
                           {% for sub in subscribers  %}  
-                          {% if sub.Payment_Status == False %}
+                          
                           <tr>
-                            <th>{{forloop.counter}}</th>
+                            <td>{{ forloop.counter }}</td>
                             <td>
                               <div class="d-flex align-items-center">
                                 <img src="{{sub.Member.Photo.url}}" alt="image" id="photoclient" />
@@ -75,7 +75,7 @@
                                 {% endif %}
                             </td>
                           </tr>
-                          {% endif %}
+                         
                           {% endfor %}
                           
                         </tbody>

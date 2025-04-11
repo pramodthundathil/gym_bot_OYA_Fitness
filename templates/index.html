@@ -282,6 +282,10 @@
             </div>
 
             <div class="d-flex">
+              <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+          class="btn mr-3 btn-sm ml-3 btn-success"> <i class="mdi mdi-plus text-lg"></i> Add Member </button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropPayment"
+          class="btn mr-3 btn-sm ml-3 btn-success"> <i class="mdi mdi-plus text-lg"></i> Add Payment </button>
               <a href="{%url 'AllMembers' %}" type="button" class="btn btn-sm bg-white btn-icon-text border">
                 <i class="mdi mdi-account-multiple btn-icon-prepend"></i> All Members </a>
               <a href="{%url 'Payments'%}" type="button" class="btn btn-sm bg-white btn-icon-text border ml-3">
@@ -606,6 +610,154 @@
           </div>
         </div>
 
+        <!-- Modal member add -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Add Members</h5>
+          <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="col-12 grid-margin">
+            <div class="card">
+              <div class="card-body">
+                <!-- <h4 class="card-title">Horizontal Two column</h4> -->
+                <form class="form-sample memberadd-form" action="{%url 'Member' %}" method="post" id="memberaddForm" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <p class="card-description">Personal Info</p>
+                  <div class="row">
+                    {% for field in form %}
+                    <div class="col-md-6">
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{field.label}}</label>
+                        <div class="col-sm-9">
+                          {% if field.name == 'Photo' %}
+                          <!-- <input type="file" required class="form-control" name="profile_pic" id="profilePicInput" accept="image/*" capture="camera" style="display:none;"> -->
+                           {{field}}
+                          <div>
+                              <button type="button" id="uploadButton" class="btn btn-primary mb-3">Take Profile Picture</button>
+                              <video id="video" width="320" height="240" autoplay style="display:none;"></video><br>
+                              <button id="capture" style="display:none;" class="btn btn-success mb-3">Capture Photo</button>
+                              <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+                              <img id="capturedImage" src="" alt="Captured Image" style="display:none;"><br>
+                              <button id="recapture" style="display:none;" class="btn btn-warning">Recapture</button>
+                          </div>
+                      {% else %}
+                          {{ field }}
+                      {% endif %}
+                          
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <p class="card-description"></p>
+                  <p lass="card-description">Subscription Info</p>
+                  <div class="row">
+                    {% for field in sub_form %}
+                    <div class="col-md-6">
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{field.label}}</label>
+                        <div class="col-sm-9">
+                          {{field}}
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" id="submitButton" onclick="disablebutton()" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal add payment-->
+  <div class="modal fade" id="staticBackdropPayment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Add Payment</h5>
+        <button type="button" class="btn btn-close mdi mdi-close text-xxl" data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <!-- <h4 class="card-title">Horizontal Two column</h4> -->
+              <form class="form-sample memberadd-form" method="post" action="{%url 'AddNewPayment' %}"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <p class="card-description">Add Payment</p>
+                <!-- <div class="row">
+                  {% for field in form %}
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">{{field.label}}:</label>
+                      <div class="col-sm-9">
+                        {{field}}
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+
+                </div> -->
+
+                <div class="row">
+
+                  <div class="col-md-12">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Please Select Member to Add Payment:</label>
+
+                      <div class="col-sm-12">
+                        <input type="text" id="memberSearch" class="form-control" autocomplete="off" placeholder="Search member...">
+                        <input type="hidden" name="member" id="selectedMemberId" required >
+                        <div id="memberResults" class="dropdown-menu w-100" style="display: none;"></div>
+                      </div>
+
+                    </div>
+                  </div>
+
+
+                </div>
+                <!-- <div class="row">
+                  <div class="col-md-10">
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label">Extend Subscription <sup>(Optional)</sup>:</label>
+                      <div class="col-sm-8">
+                        <input type="date" name="sub_extendate" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Proceed With Payment</button>
+      </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
         <footer class="footer">
           <div class="d-sm-flex justify-content-center justify-content-sm-between">
             <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © red defend
@@ -706,6 +858,237 @@
 
 
     })
+  </script>
+  
+<script>
+  document.getElementById('uploadButton').addEventListener('click', function() {
+      // Show video and capture button
+      document.getElementById('video').style.display = 'block';
+      document.getElementById('capture').style.display = 'block';
+  
+      // Access camera
+      navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function(stream) {
+              const video = document.getElementById('video');
+              video.srcObject = stream;
+              video.play();
+          })
+          .catch(function(err) {
+              console.log("Error accessing camera: " + err);
+          });
+  });
+  
+  document.getElementById('capture').addEventListener('click', function() {
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+  
+      // Capture image from video
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+      // Convert canvas image to file
+      canvas.toBlob(function(blob) {
+          const file = new File([blob], "profile_pic.png", { type: "image/png" });
+          
+          // Set file to Django form input
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          document.getElementById('profilePic').files = dataTransfer.files;
+  
+      }, "image/png");
+  
+      // Show captured image
+      document.getElementById('capturedImage').src = canvas.toDataURL("image/png");
+      document.getElementById('capturedImage').style.display = 'block';
+  
+      // Hide video and capture button, show recapture button
+      video.style.display = 'none';
+      document.getElementById('capture').style.display = 'none';
+      document.getElementById('recapture').style.display = 'block';
+  });
+  
+  document.getElementById('recapture').addEventListener('click', function() {
+      document.getElementById('video').style.display = 'block';
+      document.getElementById('capture').style.display = 'block';
+      document.getElementById('capturedImage').style.display = 'none';
+      document.getElementById('recapture').style.display = 'none';
+  });
+
+
+  function disablebutton() {
+  const form = document.getElementById("memberaddForm");
+  const button = document.getElementById("submitButton");
+  let isValid = true;
+
+  // First validate the form
+  for (let i = 0; i < form.elements.length; i++) {
+    const field = form.elements[i];
+    if (field.required && !field.value.trim()) {
+      isValid = false;
+      field.style.border = "1px solid red"; // Highlight invalid fields
+    } else {
+      field.style.border = ""; // Reset valid fields
+    }
+  }
+
+  if (!isValid) {
+    alert("Please fill out all required fields.");
+    return false; // Prevent form submission
+  }
+
+  // If validation passes, then disable button and submit
+  button.disabled = true;
+  button.innerHTML = 'Submitting...';
+  button.style.backgroundColor = '#ccc';
+  
+  // Submit the form
+  form.submit();
+  
+  // Reset button after 5 seconds
+  setTimeout(function() {
+    button.disabled = false;
+    button.innerHTML = 'Submit';
+    button.style.backgroundColor = '';
+  }, 5000);
+}
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const memberSearch = document.getElementById('memberSearch');
+    const memberResults = document.getElementById('memberResults');
+    const selectedMemberId = document.getElementById('selectedMemberId');
+    
+    let currentFocus = -1;
+    
+    // Search functionality with AJAX
+    let searchTimeout;
+    memberSearch.addEventListener('input', function() {
+      const searchTerm = this.value;
+      
+      // Clear previous timeout and reset focus
+      clearTimeout(searchTimeout);
+      currentFocus = -1;
+      
+      if (searchTerm.length < 2) {
+        memberResults.style.display = 'none';
+        return;
+      }
+      
+      // Set a small delay to prevent too many requests
+      searchTimeout = setTimeout(() => {
+        fetch(`/members/search_members/?term=${encodeURIComponent(searchTerm)}`)
+          .then(response => response.json())
+          .then(data => {
+            displayResults(data);
+          })
+          .catch(error => console.error('Error:', error));
+      }, 300);
+    });
+    
+    // Display filtered results
+    function displayResults(results) {
+      memberResults.innerHTML = '';
+      
+      if (results.length === 0) {
+        memberResults.innerHTML = '<div class="dropdown-item">No members found</div>';
+        memberResults.style.display = 'block';
+        return;
+      }
+      
+      results.forEach(member => {
+        const item = document.createElement('a');
+        item.className = 'dropdown-item';
+        item.href = '#';
+        item.textContent = member.name;
+        item.dataset.id = member.id;
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          selectItem(this);
+        });
+        
+        memberResults.appendChild(item);
+      });
+      
+      memberResults.style.display = 'block';
+    }
+    
+    // Function to select an item from dropdown
+    function selectItem(item) {
+      memberSearch.value = item.textContent;
+      selectedMemberId.value = item.dataset.id;
+      memberResults.style.display = 'none';
+      memberSearch.focus();
+    }
+    
+    // Add keyboard navigation
+    memberSearch.addEventListener('keydown', function(e) {
+      const items = memberResults.getElementsByClassName('dropdown-item');
+      
+      if (!items.length) return;
+      
+      // Down arrow
+      if (e.keyCode === 40) {
+        currentFocus++;
+        addActive(items);
+        e.preventDefault(); // Prevent cursor from moving to end of input
+      } 
+      // Up arrow
+      else if (e.keyCode === 38) {
+        currentFocus--;
+        addActive(items);
+        e.preventDefault(); // Prevent cursor from moving to start of input
+      } 
+      // Enter key
+      else if (e.keyCode === 13) {
+        e.preventDefault();
+        if (currentFocus > -1) {
+          if (items[currentFocus]) {
+            selectItem(items[currentFocus]);
+          }
+        }
+      }
+    });
+    
+    // Function to add active class to item
+    function addActive(items) {
+      if (!items) return false;
+      
+      // Remove active from all items
+      removeActive(items);
+      
+      // Adjust the focus if needed
+      if (currentFocus >= items.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (items.length - 1);
+      
+      // Add active class
+      items[currentFocus].classList.add('active');
+      
+      // Scroll into view if needed
+      items[currentFocus].scrollIntoView({block: 'nearest'});
+    }
+    
+    // Function to remove active class from items
+    function removeActive(items) {
+      for (let i = 0; i < items.length; i++) {
+        items[i].classList.remove('active');
+      }
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (e.target !== memberSearch && e.target !== memberResults) {
+        memberResults.style.display = 'none';
+      }
+    });
+    
+    // Show dropdown when focusing on search input
+    memberSearch.addEventListener('focus', function() {
+      if (this.value.length >= 2) {
+        memberResults.style.display = 'block';
+      }
+    });
+  });
   </script>
   <!-- container-scroller -->
   <!-- plugins:js -->

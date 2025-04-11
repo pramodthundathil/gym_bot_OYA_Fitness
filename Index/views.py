@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.http import HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from Members.models import Subscription_Period, Subscription, Batch_DB, TypeSubsription,MemberData,Payment, AccessToGate, Discounts
-from Members.forms import Subscription_PeriodForm, BatchForm, TypeSubsriptionForm
+from Members.forms import Subscription_PeriodForm, BatchForm, TypeSubsriptionForm, MemberAddQuickForm, SubscriptionAddForm
 from datetime import datetime, timedelta
 from django.utils import timezone
 from .models import ConfigarationDB, Support
@@ -26,6 +26,8 @@ from django.db.models import Sum
 @login_required(login_url='SignIn')
 def Home(request):
     # Get the first 8 subscribers in reverse order directly
+    form = MemberAddQuickForm()
+    sub_form = SubscriptionAddForm()
     subscribers = Subscription.objects.order_by('-id')[:8]
     subscribers_pending = Subscription.objects.filter(Payment_Status = False).order_by('-id')
     members = MemberData.objects.all()
@@ -78,7 +80,11 @@ def Home(request):
         "current_year":current_year,
         "active_count": active_count,
         "inactive_count": inactive_count,
+        "form":form,
+        "sub_form":sub_form,
+        "members":members
     }
+
 
     return render(request, "index.html", context)
 
