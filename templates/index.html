@@ -534,6 +534,92 @@
                 </div>
               </div>
             </div>
+
+
+
+            <div class="col-xl-12 col-sm-12 grid-margin stretch-card">
+              <div class="card" style="max-height: 700px;">
+                <div class="card-body px-0 overflow-auto">
+                  
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Income & Expense Comparison</h6>
+                        <div class="dropdown no-arrow">
+                            <select id="periodSelector" class="form-control form-control-sm">
+                                <option value="monthly">Monthly</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="daily">Daily</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="incomeExpenseChart"></canvas>
+                        </div>
+                        <hr>
+                        <div class="row text-center mt-4">
+                            <div class="col-md-4">
+                                <h4 class="small font-weight-bold">Total Income</h4>
+                                <div class="h3 mb-0 font-weight-bold text-success" id="totalIncome">AED 0</div>
+                            </div>
+                            <div class="col-md-4">
+                                <h4 class="small font-weight-bold">Total Expense</h4>
+                                <div class="h3 mb-0 font-weight-bold text-danger" id="totalExpense">AED 0</div>
+                            </div>
+                            <div class="col-md-4">
+                                <h4 class="small font-weight-bold">Net Profit</h4>
+                                <div class="h3 mb-0 font-weight-bold text-primary" id="totalProfit">AED 0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="col-xl-12 col-sm-12 grid-margin stretch-card">
+              <div class="card" style="max-height: 700px;">
+                <div class="card-body px-0 overflow-auto">
+
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Payment Mode Analysis</h6>
+                        <div class="dropdown no-arrow">
+                            <select id="paymentPeriodSelector" class="form-control form-control-sm">
+                                <option value="monthly">Monthly</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="daily">Daily</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="paymentModeChart"></canvas>
+                        </div>
+                        <hr>
+                        <div class="row text-center mt-4">
+                            <div class="col-12">
+                                <h4 class="small font-weight-bold">Payment Distribution</h4>
+                                <div class="progress mb-4" id="paymentDistribution">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row text-center" id="paymentSummary">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                  
+
+                </div>
+              </div>
+            </div>
+
+
+
           </div>
           <div class="row">
             <div class="col-xl-8 grid-margin stretch-card">
@@ -1090,6 +1176,357 @@
     });
   });
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+  <script>
+      // Global chart variable
+      let incomeExpenseChart;
+  
+      // Format currency function
+      function formatCurrency(amount) {
+          return 'AED' + amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+      }
+  
+      // Load chart data function
+      function loadChartData(period) {
+          fetch(`/get_chart_data/?period=${period}`)
+              .then(response => response.json())
+              .then(data => {
+                  // Update summary totals
+                  document.getElementById('totalIncome').textContent = formatCurrency(data.summary.income);
+                  document.getElementById('totalExpense').textContent = formatCurrency(data.summary.expense);
+                  
+                  const profitElement = document.getElementById('totalProfit');
+                  profitElement.textContent = formatCurrency(data.summary.profit);
+                  
+                  // Set color based on profit/loss
+                  if (data.summary.profit >= 0) {
+                      profitElement.classList.remove('text-danger');
+                      profitElement.classList.add('text-primary');
+                  } else {
+                      profitElement.classList.remove('text-primary');
+                      profitElement.classList.add('text-danger');
+                  }
+                  
+                  // Update chart
+                  updateChart(data);
+              })
+              .catch(error => console.error('Error loading chart data:', error));
+      }
+  
+      // Update chart function
+      function updateChart(data) {
+          // Destroy existing chart if it exists
+          if (incomeExpenseChart) {
+              incomeExpenseChart.destroy();
+          }
+  
+          // Get the canvas context
+          const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+          
+          // Create new chart
+          incomeExpenseChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                  labels: data.labels,
+                  datasets: [
+                      {
+                          label: 'Income',
+                          backgroundColor: 'rgba(78, 115, 223, 0.6)',
+                          borderColor: 'rgba(78, 115, 223, 1)',
+                          borderWidth: 1,
+                          data: data.income
+                      },
+                      {
+                          label: 'Expense',
+                          backgroundColor: 'rgba(231, 74, 59, 0.6)',
+                          borderColor: 'rgba(231, 74, 59, 1)',
+                          borderWidth: 1,
+                          data: data.expense
+                      },
+                      {
+                          label: 'Profit/Loss',
+                          type: 'line',
+                          fill: false,
+                          backgroundColor: 'rgba(54, 185, 204, 0.6)',
+                          borderColor: 'rgba(54, 185, 204, 1)',
+                          borderWidth: 2,
+                          pointBackgroundColor: 'rgba(54, 185, 204, 1)',
+                          pointBorderColor: '#fff',
+                          pointHoverBackgroundColor: '#fff',
+                          pointHoverBorderColor: 'rgba(54, 185, 204, 1)',
+                          data: data.profit
+                      }
+                  ]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                      x: {
+                          grid: {
+                              display: false
+                          }
+                      },
+                      y: {
+                          beginAtZero: false,
+                          ticks: {
+                              callback: function(value) {
+                                  return 'AED' + value.toLocaleString();
+                              }
+                          }
+                      }
+                  },
+                  plugins: {
+                      tooltip: {
+                          callbacks: {
+                              label: function(context) {
+                                  let label = context.dataset.label || '';
+                                  if (label) {
+                                      label += ': ';
+                                  }
+                                  label += formatCurrency(context.raw);
+                                  return label;
+                              }
+                          }
+                      },
+                      legend: {
+                          display: true,
+                          position: 'top'
+                      }
+                  }
+              }
+          });
+      }
+  
+      // Add event listener to period selector
+      document.getElementById('periodSelector').addEventListener('change', function() {
+          loadChartData(this.value);
+      });
+  
+      // Initial chart load
+      document.addEventListener('DOMContentLoaded', function() {
+          // Use the initial period passed from the server or default to monthly
+          const initialPeriod = "{{ initial_period }}";
+          document.getElementById('periodSelector').value = initialPeriod;
+          loadChartData(initialPeriod);
+      });
+  </script>
+
+
+<script>
+  // Global chart variable
+  let paymentModeChart;
+
+  // Format currency function
+  function formatCurrency(amount) {
+      return 'AED' + amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  }
+
+  // Load payment chart data function
+  function loadPaymentChartData(period) {
+      fetch(`/get_payment_chart_data/?period=${period}`)
+          .then(response => response.json())
+          .then(data => {
+              updatePaymentChart(data);
+              updatePaymentSummary(data.summary);
+          })
+          .catch(error => console.error('Error loading payment chart data:', error));
+  }
+
+  // Update payment chart function
+  function updatePaymentChart(data) {
+      // Destroy existing chart if it exists
+      if (paymentModeChart) {
+          paymentModeChart.destroy();
+      }
+
+      // Get the canvas context
+      const ctx = document.getElementById('paymentModeChart').getContext('2d');
+      
+      // Create new chart
+      paymentModeChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: data.labels,
+              datasets: data.datasets
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                  x: {
+                      grid: {
+                          display: false
+                      },
+                      stacked: true
+                  },
+                  y: {
+                      beginAtZero: true,
+                      stacked: true,
+                      ticks: {
+                          callback: function(value) {
+                              return 'AED' + value.toLocaleString();
+                          }
+                      }
+                  }
+              },
+              plugins: {
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              let label = context.dataset.label || '';
+                              if (label) {
+                                  label += ': ';
+                              }
+                              label += formatCurrency(context.raw);
+                              return label;
+                          }
+                      }
+                  },
+                  legend: {
+                      display: true,
+                      position: 'top'
+                  }
+              }
+          }
+      });
+  }
+
+  // Update payment summary function
+  function updatePaymentSummary(summary) {
+      // Calculate total (including balance payments)
+      const total = summary.total_payments + summary.balance_payments;
+      
+      // Clear existing content
+      const summaryContainer = document.getElementById('paymentSummary');
+      const progressBar = document.getElementById('paymentDistribution');
+      
+      summaryContainer.innerHTML = '';
+      progressBar.innerHTML = '';
+      
+      // Create progress bar segments
+      const colors = {
+          'Cash': '#2ecc71',
+          'Bank Transfer': '#3498db',
+          'Card': '#9b59b6',
+          'Balance': '#e74c3c',
+          'Unknown': '#bdc3c7'
+      };
+      
+      // Add progress bar segments for each payment mode
+      Object.entries(summary.payment_modes).forEach(([mode, amount]) => {
+          if (amount > 0) {
+              const percentage = (amount / total * 100).toFixed(1);
+              const div = document.createElement('div');
+              div.className = 'progress-bar';
+              div.style.width = percentage + '%';
+              div.style.backgroundColor = colors[mode] || '#bdc3c7';
+              div.setAttribute('role', 'progressbar');
+              div.setAttribute('aria-valuenow', percentage);
+              div.setAttribute('aria-valuemin', '0');
+              div.setAttribute('aria-valuemax', '100');
+              div.title = `${mode}: ${percentage}%`;
+              progressBar.appendChild(div);
+          }
+      });
+      
+      // Add progress bar segment for balance payments
+      if (summary.balance_payments > 0) {
+          const percentage = (summary.balance_payments / total * 100).toFixed(1);
+          const div = document.createElement('div');
+          div.className = 'progress-bar';
+          div.style.width = percentage + '%';
+          div.style.backgroundColor = colors['Balance'];
+          div.setAttribute('role', 'progressbar');
+          div.setAttribute('aria-valuenow', percentage);
+          div.setAttribute('aria-valuemin', '0');
+          div.setAttribute('aria-valuemax', '100');
+          div.title = `Balance Payments: ${percentage}%`;
+          progressBar.appendChild(div);
+      }
+      
+      // Create summary cards for each payment mode
+      Object.entries(summary.payment_modes).forEach(([mode, amount]) => {
+          const col = document.createElement('div');
+          col.className = 'col-md-3 col-sm-6 mb-4';
+          
+          col.innerHTML = `
+              <div class="card border-left-primary h-100 py-2">
+                  <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">${mode}</div>
+                              <div class="h5 mb-0 font-weight-bold text-gray-800">${formatCurrency(amount)}</div>
+                          </div>
+                          <div class="col-auto">
+                              <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          `;
+          
+          summaryContainer.appendChild(col);
+      });
+      
+      // Add balance payments summary card
+      if (summary.balance_payments > 0) {
+          const col = document.createElement('div');
+          col.className = 'col-md-3 col-sm-6 mb-4';
+          
+          col.innerHTML = `
+              <div class="card border-left-danger h-100 py-2">
+                  <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                              <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Balance Payments</div>
+                              <div class="h5 mb-0 font-weight-bold text-gray-800">${formatCurrency(summary.balance_payments)}</div>
+                          </div>
+                          <div class="col-auto">
+                              <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          `;
+          
+          summaryContainer.appendChild(col);
+      }
+      
+      // Add total summary card
+      const totalCol = document.createElement('div');
+      totalCol.className = 'col-md-3 col-sm-6 mb-4';
+      
+      totalCol.innerHTML = `
+          <div class="card border-left-success h-100 py-2">
+              <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Payments</div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">${formatCurrency(total)}</div>
+                      </div>
+                      <div class="col-auto">
+                          <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      `;
+      
+      summaryContainer.appendChild(totalCol);
+  }
+
+  // Add event listener to period selector
+  document.getElementById('paymentPeriodSelector').addEventListener('change', function() {
+      loadPaymentChartData(this.value);
+  });
+
+  // Initial chart load
+  document.addEventListener('DOMContentLoaded', function() {
+      loadPaymentChartData('monthly');
+  });
+</script>
   <!-- container-scroller -->
   <!-- plugins:js -->
   <!-- <script src="{%static 'assets/vendors/js/vendor.bundle.base.js' %}"></script> -->

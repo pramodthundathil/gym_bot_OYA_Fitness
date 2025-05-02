@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from django.http import HttpResponse
 from django.contrib.auth import authenticate,login,logout
-from Members.models import Subscription_Period, Subscription, Batch_DB, TypeSubsription,MemberData,Payment, AccessToGate, Discounts
+from Members.models import Subscription_Period, Subscription, Batch_DB, TypeSubsription,MemberData,Payment, AccessToGate, Discounts, BalancePayment
 from Members.forms import Subscription_PeriodForm, BatchForm, TypeSubsriptionForm, MemberAddQuickForm, SubscriptionAddForm
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -13,6 +13,7 @@ from .decorator import unautenticated_user, allowed_users
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from Finance.models import Income, Expence
 
 
 
@@ -22,6 +23,97 @@ start_date = end_date + timedelta(days=-7)
 
 from datetime import datetime
 from django.db.models import Sum
+
+
+from django.db.models.functions import TruncMonth, TruncWeek, TruncDay
+import json
+
+def get_chart_data(request):
+    """JSON endpoint for chart data that can be called via AJAX"""
+    # Get period from request parameters (default to monthly)
+    period = request.GET.get('period', 'monthly')
+    
+    # Calculate date range for filtering
+    end_date = datetime.now().date()
+    
+    if period == 'monthly':
+        start_date = end_date - timedelta(days=180)  # Last 6 months
+        date_trunc = TruncMonth('date')
+        format_str = '%b %Y'  # Month Year
+    elif period == 'weekly':
+        start_date = end_date - timedelta(weeks=6)  # Last 6 weeks
+        date_trunc = TruncWeek('date')
+        format_str = 'Week %W, %Y'  # Week number, Year
+    else:  # daily
+        start_date = end_date - timedelta(days=30)  # Last 30 days
+        date_trunc = TruncDay('date')
+        format_str = '%d %b'  # Day Month
+    
+    # Get income data grouped by period
+    income_data = Income.objects.filter(
+        date__gte=start_date, 
+        date__lte=end_date
+    ).annotate(
+        period=date_trunc
+    ).values('period').annotate(
+        total=Sum('amount')
+    ).order_by('period')
+    
+    # Get expense data grouped by period
+    expense_data = Expence.objects.filter(
+        date__gte=start_date, 
+        date__lte=end_date
+    ).annotate(
+        period=date_trunc
+    ).values('period').annotate(
+        total=Sum('amount')
+    ).order_by('period')
+    
+    # Prepare data for the chart
+    labels = []
+    income_amounts = []
+    expense_amounts = []
+    profit_amounts = []
+    
+    # Create a dictionary for quick lookup
+    income_dict = {item['period']: item['total'] for item in income_data}
+    expense_dict = {item['period']: item['total'] for item in expense_data}
+    
+    # Combine all unique periods
+    all_periods = sorted(set(list(income_dict.keys()) + list(expense_dict.keys())))
+    
+    for period_date in all_periods:
+        # Format the date according to the period type
+        formatted_date = period_date.strftime(format_str)
+        labels.append(formatted_date)
+        
+        # Get amounts (default to 0 if no data for that period)
+        income_amount = income_dict.get(period_date, 0)
+        expense_amount = expense_dict.get(period_date, 0)
+        profit = income_amount - expense_amount
+        
+        income_amounts.append(income_amount)
+        expense_amounts.append(expense_amount)
+        profit_amounts.append(profit)
+    
+    # Calculate totals for summary
+    total_income = sum(income_amounts)
+    total_expense = sum(expense_amounts)
+    total_profit = total_income - total_expense
+    
+    data = {
+        'labels': labels,
+        'income': income_amounts,
+        'expense': expense_amounts,
+        'profit': profit_amounts,
+        'summary': {
+            'income': total_income,
+            'expense': total_expense,
+            'profit': total_profit
+        }
+    }
+    
+    return JsonResponse(data)
 
 @login_required(login_url='SignIn')
 def Home(request):
@@ -82,11 +174,157 @@ def Home(request):
         "inactive_count": inactive_count,
         "form":form,
         "sub_form":sub_form,
-        "members":members
+        "members":members,
+        'initial_period': 'monthly',
     }
 
 
     return render(request, "index.html", context)
+
+# views.py
+
+
+
+def get_payment_chart_data(request):
+    """JSON endpoint for payment chart data by payment mode"""
+    # Get period from request parameters
+    period = request.GET.get('period', 'monthly')
+    
+    # Calculate date range for filtering
+    end_date = datetime.now().date()
+    
+    if period == 'monthly':
+        start_date = end_date - timedelta(days=180)  # Last 6 months
+        date_trunc = TruncMonth('Payment_Date')
+        format_str = '%b %Y'  # Month Year
+    elif period == 'weekly':
+        start_date = end_date - timedelta(weeks=6)  # Last 6 weeks
+        date_trunc = TruncWeek('Payment_Date')
+        format_str = 'Week %W, %Y'  # Week number, Year
+    else:  # daily
+        start_date = end_date - timedelta(days=30)  # Last 30 days
+        date_trunc = TruncDay('Payment_Date')
+        format_str = '%d %b'  # Day Month
+    
+    # Get all payment modes
+    payment_modes = Payment.objects.exclude(Mode_of_Payment__isnull=True).values_list('Mode_of_Payment', flat=True).distinct()
+    
+    # Initialize result dictionary
+    result = {
+        'labels': [],
+        'datasets': [],
+        'summary': {
+            'total_payments': 0,
+            'payment_modes': {},
+            'balance_payments': 0
+        }
+    }
+    
+    # Prepare datasets for each payment mode
+    mode_datasets = {}
+    for mode in payment_modes:
+        mode_datasets[mode] = []
+    
+    # Add dataset for balance payments
+    mode_datasets['Balance'] = []
+    
+    # Get main payments data grouped by period and payment mode
+    payments_data = Payment.objects.filter(
+        Payment_Date__gte=start_date,
+        Payment_Date__lte=end_date
+    ).annotate(
+        period=date_trunc
+    ).values('period', 'Mode_of_Payment').annotate(
+        total=Sum('Amount')
+    ).order_by('period', 'Mode_of_Payment')
+    
+    # Get balance payments data grouped by period
+    balance_data = BalancePayment.objects.filter(
+        Payment_Date__gte=start_date,
+        Payment_Date__lte=end_date
+    ).annotate(
+        period=date_trunc
+    ).values('period').annotate(
+        total=Sum('Amount')
+    ).order_by('period')
+    
+    # Create dictionaries for quick lookup
+    payments_dict = {}
+    for item in payments_data:
+        period = item['period']
+        mode = item['Mode_of_Payment'] or 'Unknown'
+        if period not in payments_dict:
+            payments_dict[period] = {}
+        payments_dict[period][mode] = item['total']
+    
+    balance_dict = {item['period']: item['total'] for item in balance_data}
+    
+    # Combine all unique periods
+    all_periods = sorted(set(
+        list(payments_dict.keys()) + 
+        list(balance_dict.keys())
+    ))
+    
+    # Generate labels and data for each period
+    for period_date in all_periods:
+        formatted_date = period_date.strftime(format_str)
+        result['labels'].append(formatted_date)
+        
+        # Add data for each payment mode
+        for mode in payment_modes:
+            if period_date in payments_dict and mode in payments_dict[period_date]:
+                mode_datasets[mode].append(payments_dict[period_date][mode])
+            else:
+                mode_datasets[mode].append(0)
+        
+        # Add data for balance payments
+        balance_amount = balance_dict.get(period_date, 0)
+        mode_datasets['Balance'].append(balance_amount)
+    
+    # Calculate totals for summary
+    mode_totals = {}
+    total_payments = 0
+    
+    for mode in payment_modes:
+        mode_total = sum(mode_datasets[mode])
+        mode_totals[mode] = mode_total
+        total_payments += mode_total
+    
+    balance_total = sum(mode_datasets['Balance'])
+    
+    # Add datasets to result
+    colors = {
+        'Cash': 'rgba(46, 204, 113, 0.6)',
+        'Bank Transfer': 'rgba(52, 152, 219, 0.6)',
+        'Card': 'rgba(155, 89, 182, 0.6)',
+        'Balance': 'rgba(231, 76, 60, 0.6)',
+        'Unknown': 'rgba(189, 195, 199, 0.6)'
+    }
+    
+    borders = {
+        'Cash': 'rgba(46, 204, 113, 1)',
+        'Bank Transfer': 'rgba(52, 152, 219, 1)',
+        'Card': 'rgba(155, 89, 182, 1)',
+        'Balance': 'rgba(231, 76, 60, 1)',
+        'Unknown': 'rgba(189, 195, 199, 1)'
+    }
+    
+    # Add dataset for each payment mode
+    for mode in list(payment_modes) + ['Balance']:
+        result['datasets'].append({
+            'label': mode,
+            'data': mode_datasets[mode],
+            'backgroundColor': colors.get(mode, 'rgba(189, 195, 199, 0.6)'),
+            'borderColor': borders.get(mode, 'rgba(189, 195, 199, 1)'),
+            'borderWidth': 1
+        })
+    
+    # Update summary
+    result['summary']['total_payments'] = total_payments
+    result['summary']['payment_modes'] = mode_totals
+    result['summary']['balance_payments'] = balance_total
+    
+    return JsonResponse(result)
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
