@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages
-import dj_database_url
+
 
 # import pymysql
 
@@ -94,14 +94,35 @@ WSGI_APPLICATION = 'gym_bot.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'oyagym',
+#         'USER': 'postgres',
+#         'PORT': 5432,
+#         'PASSWORD': 1234,
+#         'HOST': 'Localhost'
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'oyagym',
+        'USER': 'oyauser',
+        'PASSWORD': '1234@qwer',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
-# database = "postgres://koyeb-adm:dwy7E4jQNqVX@ep-plain-wind-a2dg3t13.eu-central-1.pg.koyeb.app/Emmy_Db"
-# DATABASES["default"] = dj_database_url.parse(database)
+
 
 
 
