@@ -112,17 +112,29 @@ WSGI_APPLICATION = 'gym_bot.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'oyagym',
+#         'USER': 'oyauser',
+#         'PASSWORD': '1234@qwer',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
+from decouple import config
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'oyagym',
-        'USER': 'oyauser',
-        'PASSWORD': '1234@qwer',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
-
 
 
 
