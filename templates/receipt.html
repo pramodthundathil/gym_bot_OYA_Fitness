@@ -10,8 +10,15 @@
             margin: 30px;
         }
         
+        {% if arabic_font_path %}
+        @font-face {
+            font-family: 'ArialArabic';
+            src: url('{{ arabic_font_path }}');
+        }
+        {% endif %}
+        
         body {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: {% if arabic_font_path %}'ArialArabic',{% endif %} Helvetica, Arial, sans-serif;
             color: #2c3e50;
             line-height: 1.4;
             background-color: white;
@@ -101,8 +108,8 @@
         }
         
         .kv-table td {
-            padding: 3px 0;
-            font-size: 10px;
+            padding: 4px 0;
+            font-size: 10.5px;
         }
         
         .kv-label {
@@ -119,17 +126,25 @@
         .package-box {
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
+            border-left: 4px solid #0052cc;
             border-radius: 4px;
-            padding: 10px 12px;
-            margin-bottom: 20px;
+            padding: 10px 15px;
+            margin-bottom: 12px;
         }
         
-        .package-title {
-            font-size: 10px;
+        .detail-label {
+            font-size: 8px;
             font-weight: bold;
-            color: #0052cc;
+            color: #7f8c8d;
             text-transform: uppercase;
-            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+        
+        .detail-value {
+            font-size: 10.5px;
+            font-weight: bold;
+            color: #2c3e50;
         }
         
         /* Items Table */
@@ -255,7 +270,7 @@
                 <td style="width: 45%; text-align: right;">
                     <div class="receipt-title">RECEIPT</div>
                     <div class="receipt-meta-top">
-                        <span style="font-weight: bold; color: #2c3e50;">Receipt No:</span> #{{ payid }}<br>
+                        <span style="font-weight: bold; color: #2c3e50;">Receipt No:</span> #{{ receipt_no }}<br>
                         <span style="font-weight: bold; color: #2c3e50;">Date:</span> {{ payment_date }}<br>
                         <span style="font-weight: bold; color: #2c3e50;">Payment Status:</span> 
                         <div class="paid-badge" style="margin-top: 4px;">PAID</div>
@@ -278,7 +293,7 @@
                         </tr>
                         <tr>
                             <td class="kv-label">Member ID:</td>
-                            <td class="kv-value">#{{ payid }}</td>
+                            <td class="kv-value">#{{ member.id }}</td>
                         </tr>
                     </table>
                 </td>
@@ -291,7 +306,7 @@
                             <td class="kv-value">{{ payment_date }}</td>
                         </tr>
                         <tr>
-                            <td class="kv-label">VAT Registration:</td>
+                            <td class="kv-label">VAT:</td>
                             <td class="kv-value">000000</td>
                         </tr>
                     </table>
@@ -301,23 +316,24 @@
         
         <!-- Subscription Details (Accent Box) -->
         <div class="package-box">
-            <div class="package-title">Subscription Package Details</div>
-            <table class="kv-table">
+            <table class="layout-table">
                 <tr>
-                    <td class="kv-label" style="width: 100px;">Membership Plan:</td>
-                    <td class="kv-value">{{ period }}</td>
-                </tr>
-                <tr>
-                    <td class="kv-label">Access Start Date:</td>
-                    <td class="kv-value">{{ payment_date }}</td>
-                </tr>
-                <tr>
-                    <td class="kv-label">Access End Date:</td>
-                    <td class="kv-value">{{ sub_end }}</td>
-                </tr>
-                <tr>
-                    <td class="kv-label">Reference ID:</td>
-                    <td class="kv-value">#{{ payid }}</td>
+                    <td style="width: 30%; border-right: 1px solid #edf2f7; padding-right: 15px;">
+                        <div class="detail-label">MEMBERSHIP PLAN</div>
+                        <div class="detail-value">{{ period }}</div>
+                    </td>
+                    <td style="width: 25%; border-right: 1px solid #edf2f7; padding-left: 15px; padding-right: 15px;">
+                        <div class="detail-label">START DATE</div>
+                        <div class="detail-value">{{ payment_date }}</div>
+                    </td>
+                    <td style="width: 25%; border-right: 1px solid #edf2f7; padding-left: 15px; padding-right: 15px;">
+                        <div class="detail-label">END DATE</div>
+                        <div class="detail-value">{{ sub_end }}</td>
+                    </td>
+                    <td style="width: 20%; padding-left: 15px;">
+                        <div class="detail-label">REFERENCE ID</div>
+                        <div class="detail-value">#{{ receipt_no }}</div>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -374,6 +390,7 @@
                     <div class="footer-note-text">
                         * This receipt is computer generated and serves as official proof of payment.<br>
                         * Membership fees are non-refundable and non-transferable.<br>
+                        * Please note: registrations are non-refundable / <span style="font-family: {% if arabic_font_path %}'ArialArabic',{% endif %} Arial, sans-serif;">{{ arabic_note }}</span><br>
                         * For inquiries regarding this transaction, contact us at +971-543374500 / +971-509589143.
                     </div>
                 </td>

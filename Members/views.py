@@ -682,6 +682,46 @@ def AddPaymentFromMemberTab(request,pk):
 #     return response
 
 
+def get_payment_receipt_no(payment):
+    from Members.models import Payment, BalancePayment
+    import datetime
+    p_date = payment.Payment_Date or datetime.date(1970, 1, 1)
+    p_id = payment.id
+    if payment.Payment_Date is None:
+        count_payments_before = Payment.objects.filter(Payment_Date__isnull=True, id__lt=p_id).count()
+        count_balance_before = 0
+    else:
+        count_payments_before = (
+            Payment.objects.filter(Payment_Date__lt=p_date).count() +
+            Payment.objects.filter(Payment_Date__isnull=True).count() +
+            Payment.objects.filter(Payment_Date=p_date, id__lt=p_id).count()
+        )
+        count_balance_before = (
+            BalancePayment.objects.filter(Payment_Date__lt=p_date).count()
+        )
+    return count_payments_before + count_balance_before + 1
+
+def get_balance_receipt_no(balance_payment):
+    from Members.models import Payment, BalancePayment
+    import datetime
+    bp_date = balance_payment.Payment_Date or datetime.date(1970, 1, 1)
+    bp_id = balance_payment.id
+    if balance_payment.Payment_Date is None:
+        count_payments_before = Payment.objects.filter(Payment_Date__isnull=True).count()
+        count_balance_before = BalancePayment.objects.filter(Payment_Date__isnull=True, id__lt=bp_id).count()
+    else:
+        count_payments_before = (
+            Payment.objects.filter(Payment_Date__lt=bp_date).count() +
+            Payment.objects.filter(Payment_Date__isnull=True).count() +
+            Payment.objects.filter(Payment_Date=bp_date).count()
+        )
+        count_balance_before = (
+            BalancePayment.objects.filter(Payment_Date__lt=bp_date).count() +
+            BalancePayment.objects.filter(Payment_Date=bp_date, id__lt=bp_id).count()
+        )
+    return count_payments_before + count_balance_before + 1
+
+
 def get_balance_receipt(request, pk):
     """
     Generate a professional PDF receipt for a payment.
@@ -720,19 +760,56 @@ def get_balance_receipt(request, pk):
     ean_barcode.write(buffer)
     buffer.seek(0)
     barcode_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+    # Try importing WeasyPrint
+    try:
+        from weasyprint import HTML
+        weasyprint_available = True
+    except ImportError:
+        weasyprint_available = False
+
+    # Get sequential receipt number
+    receipt_no = get_balance_receipt_no(balance_)
+
+    # Prepare Arabic registration note
+    arabic_note = "يرجى ملاحظة أن رسوم التسجيل غير قابلة للاسترداد."
+    arabic_font_path = ""
+
+    if not weasyprint_available:
+        # Reshape and reverse Arabic text for xhtml2pdf rendering
+        import arabic_reshaper
+        from bidi.algorithm import get_display
+        arabic_note = get_display(arabic_reshaper.reshape(arabic_note))
+        
+        # Detect suitable TrueType font on hosting system
+        import os
+        possible_paths = [
+            "/System/Library/Fonts/Supplemental/Arial.ttf",
+            "/Library/Fonts/Arial Unicode.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        ]
+        for path in possible_paths:
+            if os.path.exists(path):
+                arabic_font_path = path
+                break
     
     # Prepare context for template
     context = {
        "member": member,
        "amount": amount,
        "payid": payid,
+       "receipt_no": receipt_no,
        "payment_date": payment_date,
        "sub_start": sub_start,
        "sub_end": sub_end,
        "period": period,
        "barcode_image": barcode_image,
        "logo": logo,
-       "balance":"balance"
+       "balance": "balance",
+       "arabic_note": arabic_note,
+       "arabic_font_path": arabic_font_path,
     }
     
     # Render template to HTML
@@ -741,32 +818,36 @@ def get_balance_receipt(request, pk):
     html = template.render(context)
     
     # Generate PDF using WeasyPrint for better CSS support
-    try:
-        from weasyprint import HTML, CSS
-        from django.conf import settings
-        import os
-        
-        # Create response object
-        response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
-        
-        # Generate PDF with WeasyPrint
-        base_url = request.build_absolute_uri('/')
-        pdf = HTML(string=html, base_url=base_url).write_pdf()
-        
-        # Write PDF to response
-        response.write(pdf)
-        return response
-        
-    except ImportError:
-        # Fallback to xhtml2pdf if WeasyPrint is not available
-        response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
-        pisa_status = pisa.CreatePDF(html, dest=response)
-        
-        if pisa_status.err:
-            return HttpResponse("We encountered some errors <pre>" + html + '</pre>')
-        return response
+    if weasyprint_available:
+        try:
+            from weasyprint import HTML, CSS
+            from django.conf import settings
+            import os
+            
+            # Create response object
+            response = HttpResponse(content_type="application/pdf")
+            response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
+            
+            # Generate PDF with WeasyPrint
+            base_url = request.build_absolute_uri('/')
+            pdf = HTML(string=html, base_url=base_url).write_pdf()
+            
+            # Write PDF to response
+            response.write(pdf)
+            return response
+            
+        except Exception:
+            pass
+
+    # Fallback to xhtml2pdf if WeasyPrint is not available or fails
+    response = HttpResponse(content_type="application/pdf")
+    response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    
+    if pisa_status.err:
+        return HttpResponse("We encountered some errors <pre>" + html + '</pre>')
+    return response
+
 
 @login_required(login_url='SignIn')
 def ReceiptGenerate(request, pk):
@@ -806,19 +887,56 @@ def ReceiptGenerate(request, pk):
     ean_barcode.write(buffer)
     buffer.seek(0)
     barcode_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+    # Try importing WeasyPrint
+    try:
+        from weasyprint import HTML
+        weasyprint_available = True
+    except ImportError:
+        weasyprint_available = False
+
+    # Get sequential receipt number
+    receipt_no = get_payment_receipt_no(payment)
+
+    # Prepare Arabic registration note
+    arabic_note = "يرجى ملاحظة أن رسوم التسجيل غير قابلة للاسترداد."
+    arabic_font_path = ""
+
+    if not weasyprint_available:
+        # Reshape and reverse Arabic text for xhtml2pdf rendering
+        import arabic_reshaper
+        from bidi.algorithm import get_display
+        arabic_note = get_display(arabic_reshaper.reshape(arabic_note))
+        
+        # Detect suitable TrueType font on hosting system
+        import os
+        possible_paths = [
+            "/System/Library/Fonts/Supplemental/Arial.ttf",
+            "/Library/Fonts/Arial Unicode.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        ]
+        for path in possible_paths:
+            if os.path.exists(path):
+                arabic_font_path = path
+                break
     
     # Prepare context for template
     context = {
        "member": member,
        "amount": amount,
        "payid": payid,
+       "receipt_no": receipt_no,
        "payment_date": payment_date,
        "sub_start": sub_start,
        "sub_end": sub_end,
        "period": period,
        "barcode_image": barcode_image,
        "logo": logo,
-       "balance":" "
+       "balance": " ",
+       "arabic_note": arabic_note,
+       "arabic_font_path": arabic_font_path,
     }
     
     # Render template to HTML
@@ -827,32 +945,35 @@ def ReceiptGenerate(request, pk):
     html = template.render(context)
     
     # Generate PDF using WeasyPrint for better CSS support
-    try:
-        from weasyprint import HTML, CSS
-        from django.conf import settings
-        import os
-        
-        # Create response object
-        response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
-        
-        # Generate PDF with WeasyPrint
-        base_url = request.build_absolute_uri('/')
-        pdf = HTML(string=html, base_url=base_url).write_pdf()
-        
-        # Write PDF to response
-        response.write(pdf)
-        return response
-        
-    except ImportError:
-        # Fallback to xhtml2pdf if WeasyPrint is not available
-        response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
-        pisa_status = pisa.CreatePDF(html, dest=response)
-        
-        if pisa_status.err:
-            return HttpResponse("We encountered some errors <pre>" + html + '</pre>')
-        return response
+    if weasyprint_available:
+        try:
+            from weasyprint import HTML, CSS
+            from django.conf import settings
+            import os
+            
+            # Create response object
+            response = HttpResponse(content_type="application/pdf")
+            response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
+            
+            # Generate PDF with WeasyPrint
+            base_url = request.build_absolute_uri('/')
+            pdf = HTML(string=html, base_url=base_url).write_pdf()
+            
+            # Write PDF to response
+            response.write(pdf)
+            return response
+            
+        except Exception:
+            pass
+
+    # Fallback to xhtml2pdf if WeasyPrint is not available or fails
+    response = HttpResponse(content_type="application/pdf")
+    response['Content-Disposition'] = f'attachment; filename="payment_receipt_{member}_{payid}.pdf"'
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    
+    if pisa_status.err:
+        return HttpResponse("We encountered some errors <pre>" + html + '</pre>')
+    return response
 
 @login_required(login_url='SignIn')
 def DeletePayment(request,pk):
