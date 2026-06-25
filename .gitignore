@@ -22,3 +22,8 @@ env/
 
 # Ignore migrations cache (optional)
 **/migrations/__pycache__/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
